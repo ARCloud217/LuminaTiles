@@ -1,0 +1,58 @@
+:root {
+  color-scheme: light dark;
+
+  /* 色彩：纸张暖白、墨黑文字，强调色取"光"的金铜 */
+  --color-bg: #f4f1ea;
+  --color-surface: #fffdf9;
+  --color-surface-raised: #ffffff;
+  --color-ink: #1a1c22;
+  --color-ink-muted: #6a6e78;
+  --color-line: #e2ddd2;
+  --color-accent: #b8802a;
+  --color-accent-soft: #f0e2c8;
+  --color-accent-highlight: #ffe9bd;
+  --color-accent-glow: rgba(196, 145, 55, 0.45);
+  --color-danger: #b3261e;
+
+  /* 字体：Windows 可变字体，展示体收紧字距 */
+  --font-family-base: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  --font-family-display: "Segoe UI Variable Display", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  --font-size-eyebrow: 0.6875rem;
+  --font-size-body: 0.9375rem;
+  --font-size-title: 2.75rem;
+  --letter-spacing-eyebrow: 0.18em;
+  --letter-spacing-display: -0.02em;
+
+  /* 间距 / 圆角 / 阴影 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --shadow-card: 0 1px 2px rgba(26, 28, 34, 0.06), 0 12px 32px -18px rgba(26, 28, 34, 0.35);
+  --shadow-toast: 0 10px 28px -10px rgba(0, 0, 0, 0.55);
+  --duration-fade: 160ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #13141a;
+    --color-surface: #1c1e26;
+    --color-surface-raised: #232630;
+    --color-ink: #f1efea;
+    --color-ink-muted: #9aa0ac;
+    --color-line: #2e313c;
+    --color-accent: #e4b363;
+    --color-accent-soft: #2c2618;
+    --color-accent-highlight: #4a3a1c;
+    --color-accent-glow: rgba(228, 179, 99, 0.4);
+    --color-danger: #f2b8b5;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -18px rgba(0, 0, 0, 0.9);
+    --shadow-toast: 0 10px 28px -10px rgba(0, 0, 0, 0.8);
+  }
+}

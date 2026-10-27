@@ -1,0 +1,26 @@
+# 本地规范与记录（按需决定是否入库）
+AGENTS.md
+docs/*
+skills/*
+
+# 构建产物
+src-tauri/target/
+node_modules/
+dist/
+
+# 本地调试与临时文件
+.tmp/
+*.log
+*.pid
+*.tmp
+
+# 变量未展开时误创建的目录
+%SystemDrive%/
+
+# 编辑器与系统文件
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

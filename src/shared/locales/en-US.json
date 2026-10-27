@@ -1,0 +1,23 @@
+{
+  "app": {
+    "title": "LuminaTiles",
+    "initFailed": "The interface failed to start. Please restart the app."
+  },
+  "brand": {
+    "eyebrow": "LUMINA TILES",
+    "name": "LuminaTiles",
+    "tagline": "Make your desktop a window full of light."
+  },
+  "settings": {
+    "title": "Settings",
+    "placeholder": "Feature settings will open up as versions ship."
+  },
+  "lockIndicator": {
+    "capsLock": "Caps Lock",
+    "numLock": "Num Lock",
+    "insert": "Insert",
+    "on": "On",
+    "off": "Off",
+    "unavailable": "Key hints are unavailable: the system did not allow the keyboard hook."
+  }
+}

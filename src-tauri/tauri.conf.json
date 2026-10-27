@@ -10,9 +10,28 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "luminatiles",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "LuminaTiles",
+        "width": 880,
+        "height": 620,
+        "minWidth": 640,
+        "minHeight": 480
+      },
+      {
+        "label": "lock-indicator",
+        "url": "features/lock-indicator/index.html",
+        "title": "Lock indicator",
+        "width": 236,
+        "height": 72,
+        "visible": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false,
+        "resizable": false,
+        "shadow": false,
+        "center": false
       }
     ],
     "security": {

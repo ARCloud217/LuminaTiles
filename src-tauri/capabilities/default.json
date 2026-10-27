@@ -1,10 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
-  "windows": ["main"],
-  "permissions": [
-    "core:default",
-    "opener:default"
-  ]
+  "description": "主窗口与按键提示窗口的权限",
+  "windows": ["main", "lock-indicator"],
+  "permissions": ["core:default"]
 }

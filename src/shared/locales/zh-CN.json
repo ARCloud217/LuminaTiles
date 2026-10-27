@@ -1,0 +1,23 @@
+{
+  "app": {
+    "title": "LuminaTiles",
+    "initFailed": "界面初始化失败，请重启应用。"
+  },
+  "brand": {
+    "eyebrow": "OTAZ DEV",
+    "name": "Lumina Tiles",
+    "tagline": "探索"
+  },
+  "settings": {
+    "title": "设置",
+    "placeholder": "功能设置将随版本逐步开放。"
+  },
+  "lockIndicator": {
+    "capsLock": "大写锁定",
+    "numLock": "数字锁定",
+    "insert": "插入模式",
+    "on": "已开启",
+    "off": "已关闭",
+    "unavailable": "按键提示不可用：系统未允许安装键盘钩子。"
+  }
+}
