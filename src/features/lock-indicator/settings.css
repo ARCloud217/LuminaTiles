@@ -1,0 +1,148 @@
+/* 主窗口中的按键提示设置面板 */
+.settings__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.settings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.button {
+  font: inherit;
+  padding: var(--space-1) var(--space-3);
+  min-height: 2rem;
+  color: var(--color-surface-raised);
+  background: var(--color-accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.button--ghost {
+  color: var(--color-ink);
+  background: transparent;
+  border-color: var(--color-line);
+}
+
+.button:hover {
+  filter: brightness(1.06);
+}
+
+.settings__form {
+  margin: 0;
+}
+
+.settings__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.settings__legend {
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.settings__hint {
+  margin: var(--space-1) 0 var(--space-4);
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+
+.settings__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-5);
+}
+
+.settings__status {
+  margin: var(--space-3) 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.field__label {
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+
+.field__control {
+  font: inherit;
+  color: inherit;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  min-height: 2rem;
+  width: 100%;
+}
+
+.field__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2rem;
+}
+
+.field__range {
+  flex: 1 1 auto;
+  min-width: 0;
+  accent-color: var(--color-accent);
+}
+
+.field__value {
+  flex: 0 0 auto;
+  min-width: 6ch;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.field__color {
+  flex: 0 0 auto;
+  width: 2.75rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+
+.field__color:disabled {
+  opacity: 0.5;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+.checkbox input {
+  accent-color: var(--color-accent);
+}
+
+@media (max-width: 720px) {
+  .settings__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

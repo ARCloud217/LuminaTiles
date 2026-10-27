@@ -1,0 +1,135 @@
+/* 通用动画预设：与 src/shared/motion/index.js 的 id 一一对应 */
+[data-motion][data-phase=""] {
+  opacity: 0;
+}
+
+[data-motion="fade"][data-phase="in"] {
+  animation: motion-fade-in var(--motion-duration, 180ms) ease-out both;
+}
+[data-motion="fade"][data-phase="out"] {
+  animation: motion-fade-out var(--motion-duration, 180ms) ease-in both;
+}
+
+[data-motion="slideUp"][data-phase="in"] {
+  animation: motion-slide-up-in var(--motion-duration, 180ms) ease-out both;
+}
+[data-motion="slideUp"][data-phase="out"] {
+  animation: motion-slide-up-out var(--motion-duration, 180ms) ease-in both;
+}
+
+[data-motion="slideDown"][data-phase="in"] {
+  animation: motion-slide-down-in var(--motion-duration, 180ms) ease-out both;
+}
+[data-motion="slideDown"][data-phase="out"] {
+  animation: motion-slide-down-out var(--motion-duration, 180ms) ease-in both;
+}
+
+[data-motion="slideLeft"][data-phase="in"] {
+  animation: motion-slide-left-in var(--motion-duration, 180ms) ease-out both;
+}
+[data-motion="slideLeft"][data-phase="out"] {
+  animation: motion-slide-left-out var(--motion-duration, 180ms) ease-in both;
+}
+
+[data-motion="slideRight"][data-phase="in"] {
+  animation: motion-slide-right-in var(--motion-duration, 180ms) ease-out both;
+}
+[data-motion="slideRight"][data-phase="out"] {
+  animation: motion-slide-right-out var(--motion-duration, 180ms) ease-in both;
+}
+
+[data-motion="fly"][data-phase="in"] {
+  animation: motion-fly-in var(--motion-duration, 180ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+[data-motion="fly"][data-phase="out"] {
+  animation: motion-fly-out var(--motion-duration, 180ms) ease-in both;
+}
+
+@keyframes motion-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes motion-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes motion-slide-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes motion-slide-up-out {
+  to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes motion-slide-down-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes motion-slide-down-out {
+  to {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes motion-slide-left-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+@keyframes motion-slide-left-out {
+  to {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+@keyframes motion-slide-right-in {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+@keyframes motion-slide-right-out {
+  to {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+@keyframes motion-fly-in {
+  from {
+    opacity: 0;
+    transform: translate(36px, 26px) scale(0.78);
+  }
+}
+
+@keyframes motion-fly-out {
+  to {
+    opacity: 0;
+    transform: translate(-32px, -22px) scale(0.82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion][data-phase] {
+    animation: none !important;
+    opacity: 1;
+  }
+}

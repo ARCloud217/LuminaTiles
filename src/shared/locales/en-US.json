@@ -10,7 +10,50 @@
   },
   "settings": {
     "title": "Settings",
-    "placeholder": "Feature settings will open up as versions ship."
+    "lockIndicator": {
+      "title": "Key hints",
+      "description": "Adjust where and how the hint appears when Caps Lock, Num Lock or Insert toggles.",
+      "position": "Position",
+      "positionCursor": "Follow cursor",
+      "positionTopLeft": "Top left",
+      "positionTopCenter": "Top center",
+      "positionTopRight": "Top right",
+      "positionMiddleLeft": "Middle left",
+      "positionCenter": "Screen center",
+      "positionMiddleRight": "Middle right",
+      "positionBottomLeft": "Bottom left",
+      "positionBottomCenter": "Bottom center",
+      "positionBottomRight": "Bottom right",
+      "monitor": "Monitor",
+      "monitorFollow": "Follow the cursor's monitor",
+      "monitorPrimary": "Primary monitor",
+      "monitorOption": "{name} ({width}×{height})",
+      "offsetX": "Horizontal offset",
+      "offsetY": "Vertical offset",
+      "offsetValue": "{value} px",
+      "size": "Size",
+      "sizeValue": "{value}%",
+      "accent": "Accent color",
+      "text": "Text color",
+      "followTheme": "Follow theme",
+      "opacity": "Opacity",
+      "opacityValue": "{value}%",
+      "animation": "Animation",
+      "motionNone": "None",
+      "motionFade": "Fade",
+      "motionSlideUp": "Slide up",
+      "motionSlideDown": "Slide down",
+      "motionSlideLeft": "Slide left",
+      "motionSlideRight": "Slide right",
+      "motionFly": "Fly",
+      "duration": "Animation duration",
+      "durationValue": "{value} ms",
+      "preview": "Preview",
+      "reset": "Reset to defaults",
+      "saveFailed": "Failed to save settings. Please try again.",
+      "loadFailed": "Failed to load settings; defaults are in use.",
+      "monitorsFailed": "Could not read the monitor list; the cursor's monitor will be used."
+    }
   },
   "lockIndicator": {
     "capsLock": "Caps Lock",
@@ -19,5 +62,10 @@
     "on": "On",
     "off": "Off",
     "unavailable": "Key hints are unavailable: the system did not allow the keyboard hook."
+  },
+  "tray": {
+    "tooltip": "LuminaTiles",
+    "openMain": "Open main window",
+    "quit": "Quit LuminaTiles"
   }
 }

@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="shared/styles/tokens.css" />
     <link rel="stylesheet" href="shared/styles/shell.css" />
+    <link rel="stylesheet" href="features/lock-indicator/settings.css" />
     <script type="module" src="main.js"></script>
   </head>
   <body>
@@ -24,8 +25,120 @@
       </div>
 
       <section class="settings" aria-labelledby="settings-title">
-        <h2 class="settings__title" id="settings-title" data-i18n="settings.title"></h2>
-        <p class="settings__placeholder" data-i18n="settings.placeholder"></p>
+        <div class="settings__header">
+          <h2 class="settings__title" id="settings-title" data-i18n="settings.title"></h2>
+          <div class="settings__actions">
+            <button type="button" class="button" data-settings-action="preview" data-i18n="settings.lockIndicator.preview"></button>
+            <button type="button" class="button button--ghost" data-settings-action="reset" data-i18n="settings.lockIndicator.reset"></button>
+          </div>
+        </div>
+
+        <form class="settings__form" data-settings-form>
+          <fieldset class="settings__group">
+            <legend class="settings__legend" data-i18n="settings.lockIndicator.title"></legend>
+            <p class="settings__hint" data-i18n="settings.lockIndicator.description"></p>
+
+            <div class="settings__grid">
+              <div class="field">
+                <label class="field__label" for="setting-position" data-i18n="settings.lockIndicator.position"></label>
+                <select class="field__control" id="setting-position" data-setting="position">
+                  <option value="cursor" data-i18n="settings.lockIndicator.positionCursor"></option>
+                  <option value="topLeft" data-i18n="settings.lockIndicator.positionTopLeft"></option>
+                  <option value="topCenter" data-i18n="settings.lockIndicator.positionTopCenter"></option>
+                  <option value="topRight" data-i18n="settings.lockIndicator.positionTopRight"></option>
+                  <option value="middleLeft" data-i18n="settings.lockIndicator.positionMiddleLeft"></option>
+                  <option value="center" data-i18n="settings.lockIndicator.positionCenter"></option>
+                  <option value="middleRight" data-i18n="settings.lockIndicator.positionMiddleRight"></option>
+                  <option value="bottomLeft" data-i18n="settings.lockIndicator.positionBottomLeft"></option>
+                  <option value="bottomCenter" data-i18n="settings.lockIndicator.positionBottomCenter"></option>
+                  <option value="bottomRight" data-i18n="settings.lockIndicator.positionBottomRight"></option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="setting-monitor" data-i18n="settings.lockIndicator.monitor"></label>
+                <select class="field__control" id="setting-monitor" data-setting="monitor"></select>
+              </div>
+
+              <div class="field field--range">
+                <label class="field__label" for="setting-offset-x" data-i18n="settings.lockIndicator.offsetX"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-offset-x" data-setting="offsetX" min="-200" max="200" step="2" value="0" />
+                  <output class="field__value" for="setting-offset-x" data-setting-value="offsetX"></output>
+                </div>
+              </div>
+
+              <div class="field field--range">
+                <label class="field__label" for="setting-offset-y" data-i18n="settings.lockIndicator.offsetY"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-offset-y" data-setting="offsetY" min="-200" max="200" step="2" value="0" />
+                  <output class="field__value" for="setting-offset-y" data-setting-value="offsetY"></output>
+                </div>
+              </div>
+
+              <div class="field field--range">
+                <label class="field__label" for="setting-scale" data-i18n="settings.lockIndicator.size"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-scale" data-setting="scale" min="80" max="160" step="5" value="100" />
+                  <output class="field__value" for="setting-scale" data-setting-value="scale"></output>
+                </div>
+              </div>
+
+              <div class="field field--range">
+                <label class="field__label" for="setting-opacity" data-i18n="settings.lockIndicator.opacity"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-opacity" data-setting="opacity" min="30" max="100" step="1" value="100" />
+                  <output class="field__value" for="setting-opacity" data-setting-value="opacity"></output>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="setting-animation" data-i18n="settings.lockIndicator.animation"></label>
+                <select class="field__control" id="setting-animation" data-setting="animation">
+                  <option value="none" data-i18n="settings.lockIndicator.motionNone"></option>
+                  <option value="fade" data-i18n="settings.lockIndicator.motionFade"></option>
+                  <option value="slideUp" data-i18n="settings.lockIndicator.motionSlideUp"></option>
+                  <option value="slideDown" data-i18n="settings.lockIndicator.motionSlideDown"></option>
+                  <option value="slideLeft" data-i18n="settings.lockIndicator.motionSlideLeft"></option>
+                  <option value="slideRight" data-i18n="settings.lockIndicator.motionSlideRight"></option>
+                  <option value="fly" data-i18n="settings.lockIndicator.motionFly"></option>
+                </select>
+              </div>
+
+              <div class="field field--range">
+                <label class="field__label" for="setting-duration" data-i18n="settings.lockIndicator.duration"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-duration" data-setting="durationMs" min="120" max="600" step="20" value="180" />
+                  <output class="field__value" for="setting-duration" data-setting-value="durationMs"></output>
+                </div>
+              </div>
+
+              <div class="field field--color">
+                <span class="field__label" id="setting-accent-label" data-i18n="settings.lockIndicator.accent"></span>
+                <div class="field__row" role="group" aria-labelledby="setting-accent-label">
+                  <input class="field__color" type="color" data-setting="accent" aria-labelledby="setting-accent-label" />
+                  <label class="checkbox">
+                    <input type="checkbox" data-setting="accentFollowTheme" />
+                    <span data-i18n="settings.lockIndicator.followTheme"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="field field--color">
+                <span class="field__label" id="setting-text-label" data-i18n="settings.lockIndicator.text"></span>
+                <div class="field__row" role="group" aria-labelledby="setting-text-label">
+                  <input class="field__color" type="color" data-setting="text" aria-labelledby="setting-text-label" />
+                  <label class="checkbox">
+                    <input type="checkbox" data-setting="textFollowTheme" />
+                    <span data-i18n="settings.lockIndicator.followTheme"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <p class="settings__status" role="status" data-settings-status hidden></p>
         <p class="shell__error" role="alert" data-lock-indicator-error hidden></p>
         <p class="shell__error" role="alert" data-init-error hidden></p>
       </section>

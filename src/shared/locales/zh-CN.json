@@ -10,7 +10,50 @@
   },
   "settings": {
     "title": "设置",
-    "placeholder": "功能设置将随版本逐步开放。"
+    "lockIndicator": {
+      "title": "按键提示",
+      "description": "调整 Caps Lock / Num Lock / Insert 切换时弹出提示的位置、大小、色彩与动画。",
+      "position": "显示位置",
+      "positionCursor": "跟随光标",
+      "positionTopLeft": "左上角",
+      "positionTopCenter": "顶部居中",
+      "positionTopRight": "右上角",
+      "positionMiddleLeft": "左侧居中",
+      "positionCenter": "屏幕居中",
+      "positionMiddleRight": "右侧居中",
+      "positionBottomLeft": "左下角",
+      "positionBottomCenter": "底部居中",
+      "positionBottomRight": "右下角",
+      "monitor": "显示器",
+      "monitorFollow": "跟随光标所在屏幕",
+      "monitorPrimary": "主显示器",
+      "monitorOption": "{name}（{width}×{height}）",
+      "offsetX": "水平偏移",
+      "offsetY": "垂直偏移",
+      "offsetValue": "{value} px",
+      "size": "大小",
+      "sizeValue": "{value}%",
+      "accent": "强调色",
+      "text": "文字颜色",
+      "followTheme": "跟随主题",
+      "opacity": "不透明度",
+      "opacityValue": "{value}%",
+      "animation": "动画",
+      "motionNone": "无动画",
+      "motionFade": "淡入淡出",
+      "motionSlideUp": "向上滑入滑出",
+      "motionSlideDown": "向下滑入滑出",
+      "motionSlideLeft": "向左滑入滑出",
+      "motionSlideRight": "向右滑入滑出",
+      "motionFly": "飞入飞出",
+      "duration": "动画时长",
+      "durationValue": "{value} 毫秒",
+      "preview": "预览提示",
+      "reset": "恢复默认",
+      "saveFailed": "设置保存失败，请重试。",
+      "loadFailed": "设置加载失败，已使用默认值。",
+      "monitorsFailed": "显示器列表读取失败，将使用光标所在屏幕。"
+    }
   },
   "lockIndicator": {
     "capsLock": "大写锁定",
@@ -19,5 +62,10 @@
     "on": "已开启",
     "off": "已关闭",
     "unavailable": "按键提示不可用：系统未允许安装键盘钩子。"
+  },
+  "tray": {
+    "tooltip": "LuminaTiles",
+    "openMain": "打开主窗口",
+    "quit": "退出 LuminaTiles"
   }
 }

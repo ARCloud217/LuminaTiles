@@ -1,9 +1,11 @@
 import { initI18n, t } from "./shared/i18n/index.js";
 import { initLockIndicatorFeature } from "./features/lock-indicator/index.js";
+import { initLockIndicatorSettingsFeature } from "./features/lock-indicator/settings.js";
 
 // 功能注册表：window 指定功能运行在哪个窗口，enabled 用于单独停用与调试。
 const FEATURES = [
-  { id: "lock-indicator", enabled: true, window: "lock-indicator", init: initLockIndicatorFeature }
+  { id: "lock-indicator", enabled: true, window: "lock-indicator", init: initLockIndicatorFeature },
+  { id: "lock-indicator-settings", enabled: true, window: "main", init: initLockIndicatorSettingsFeature }
 ];
 
 const cleanups = [];
