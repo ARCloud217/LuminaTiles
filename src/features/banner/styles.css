@@ -1,4 +1,5 @@
-/* 顶部横幅：整条贴顶，颜色全部来自主题令牌；高度由内容撑开，窗口高度随测量结果同步。 */
+/* 顶部横幅：整条贴顶，颜色全部来自主题令牌。
+   左侧固定队列计数槽，右侧按 Rust 下发的宽度把 1–3 条消息并排；高度由内容撑开。 */
 
 html,
 body {
@@ -25,8 +26,8 @@ body {
   transform: translateY(-100%);
   opacity: 0;
   transition:
-    transform var(--duration-banner-in, 180ms) var(--ease-out),
-    opacity var(--duration-banner-in, 180ms) var(--ease-out);
+    transform 180ms var(--ease-out),
+    opacity 180ms var(--ease-out);
 }
 
 .banner[data-state="shown"] {
@@ -37,67 +38,138 @@ body {
 .banner[data-state="leaving"] {
   transform: translateY(-100%);
   opacity: 0;
-  transition-duration: var(--duration-banner-out, 160ms);
+  transition-duration: 160ms;
 }
 
-/* 光标落在横幅上时淡出，让下面的内容露出来（窗口本身点击穿透）。 */
+/* 光标落在横幅上时整条淡出，让下面的内容露出来（窗口本身点击穿透）。 */
 .banner[data-state="shown"].is-dimmed {
   opacity: 0.35;
   transition-duration: 120ms;
 }
 
-.banner__signal {
-  flex: 0 0 auto;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--banner-signal, var(--color-accent));
+/* 计数槽：始终占位，0 条时数字与图形一起淡化，避免整条左右跳动。 */
+.banner__queue {
+  flex: 0 0 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--color-ink-muted);
 }
 
-.banner[data-level="success"] {
-  --banner-signal: var(--color-success);
+.banner__queue[data-empty="true"] {
+  color: var(--color-ink-faint);
 }
 
-.banner[data-level="warning"] {
-  --banner-signal: var(--color-warning);
+.banner__glyph {
+  width: 14px;
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    currentColor 0 1.5px,
+    transparent 1.5px 4.5px
+  );
 }
 
-.banner[data-level="error"] {
-  --banner-signal: var(--color-danger);
+.banner__queue-count {
+  font-size: var(--font-size-caption);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-.banner__content {
+.banner__slots {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cell {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
+  padding: 6px 12px;
+  flex-grow: 0;
+  flex-shrink: 1;
+  transition:
+    flex-basis 180ms var(--ease-out),
+    opacity 120ms linear;
+}
+
+/* 相邻格子之间补一条极细分隔，平分空间时不至于糊成一条。 */
+.cell + .cell:not(.cell--ghost) {
+  box-shadow: inset 1px 0 0 var(--color-line);
+}
+
+.cell__signal {
+  flex: 0 0 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--cell-signal, var(--color-accent));
+}
+
+.cell[data-level="success"] {
+  --cell-signal: var(--color-success);
+}
+
+.cell[data-level="warning"] {
+  --cell-signal: var(--color-warning);
+}
+
+.cell[data-level="error"] {
+  --cell-signal: var(--color-danger);
+}
+
+.cell__content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
   flex: 1 1 auto;
 }
 
-.banner__text {
+.cell__text {
   margin: 0;
+  min-width: 0;
   font-size: var(--font-size-body);
   line-height: 1.45;
   color: var(--color-ink);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.banner__meta {
+.cell__meta {
   flex: 0 0 auto;
   font-size: var(--font-size-caption);
   color: var(--color-secondary);
   font-variant-numeric: tabular-nums;
 }
 
+/* 幽灵格：离场时脱离文档流停在原位收窄淡出，剩下的格子照常重排。 */
+.cell--ghost {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transition:
+    width 160ms var(--ease-out),
+    opacity 160ms linear;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .banner {
+  .banner,
+  .cell,
+  .cell--ghost {
     transition: opacity 120ms linear;
-    transform: none;
   }
 
-  .banner[data-state="shown"] {
-    transform: none;
-  }
-
+  .banner[data-state="shown"],
   .banner[data-state="leaving"] {
     transform: none;
   }

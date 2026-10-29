@@ -15,12 +15,12 @@
     <script type="module" src="../../main.js"></script>
   </head>
   <body>
-    <section class="banner" data-banner data-level="info" data-state="idle">
-      <span class="banner__signal" aria-hidden="true"></span>
-      <div class="banner__content">
-        <p class="banner__text" data-banner-text role="status" aria-live="polite"></p>
-        <span class="banner__meta" data-banner-meta hidden></span>
+    <section class="banner" data-banner data-state="idle">
+      <div class="banner__queue" data-banner-queue data-empty="true" role="status">
+        <span class="banner__glyph" aria-hidden="true"></span>
+        <span class="banner__queue-count" data-banner-queue-count>0</span>
       </div>
+      <div class="banner__slots" data-banner-slots></div>
     </section>
   </body>
 </html>

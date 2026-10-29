@@ -192,6 +192,7 @@ export async function initDebugFeature() {
   const durationInput = panel.querySelector('[data-debug-banner="durationMs"]');
   const durationOutput = panel.querySelector('[data-debug-value="durationMs"]');
   const monitorSelect = panel.querySelector('[data-debug-banner="monitor"]');
+  const importanceSelect = panel.querySelector("[data-debug-importance]");
   const systemAccentNode = panel.querySelector("[data-debug-system-accent]");
   const systemToneNode = panel.querySelector("[data-debug-system-tone]");
   const geometryNodes = {};
@@ -204,6 +205,8 @@ export async function initDebugFeature() {
   }
 
   if (textInput) textInput.placeholder = t("settings.debug.customPlaceholder");
+  // 缺省重要级是 normal，选项按高→低排列只为读数顺手，所以显式设一次。
+  if (importanceSelect) importanceSelect.value = "normal";
 
   let sentCount = 0;
   let lastLevel = "info";
@@ -212,14 +215,17 @@ export async function initDebugFeature() {
   let confirming = false;
   let confirmTimer = 0;
 
-  function showError(message) {
+  function showError(message, source = "action") {
     if (!errorNode) return;
     errorNode.hidden = false;
+    errorNode.dataset.source = source;
     errorNode.textContent = message;
   }
 
   function clearError() {
-    if (errorNode) errorNode.hidden = true;
+    if (!errorNode) return;
+    errorNode.hidden = true;
+    delete errorNode.dataset.source;
   }
 
   function repaintTheme() {
@@ -271,10 +277,25 @@ export async function initDebugFeature() {
           ? `${Math.round(cursor.x)}, ${Math.round(cursor.y)}`
           : t("settings.debug.bannerMissing");
       }
-      clearError();
+      if (geometryNodes.epoch) geometryNodes.epoch.textContent = String(geometry.epoch ?? 0);
+      if (geometryNodes.queueCount) geometryNodes.queueCount.textContent = String(geometry.queueCount ?? 0);
+      if (geometryNodes.queueHead) {
+        geometryNodes.queueHead.textContent = geometry.queueHead ?? t("settings.debug.bannerSlotEmpty");
+      }
+      if (geometryNodes.slots) {
+        const slots = Array.isArray(geometry.slots) ? geometry.slots : [];
+        // 每格读数带上占比，方便对照设计文档的宽度表。
+        geometryNodes.slots.textContent = slots.length
+          ? slots
+              .map((slot) => `${slot.id} · ${slot.level} · ${slot.importance} · ${Math.round(slot.width)}%`)
+              .join("  |  ")
+          : t("settings.debug.bannerSlotEmpty");
+      }
+      // 这里每秒轮询一次，不能顺手清错误提示，否则别的操作失败信息留不住。
+      if (errorNode?.dataset.source === "geometry") clearError();
     } catch (error) {
       console.error("[lumina-tiles] 横幅体检失败", error);
-      showError(t("settings.debug.geometryFailed"));
+      showError(t("settings.debug.geometryFailed"), "geometry");
     }
   }
 
@@ -327,6 +348,10 @@ export async function initDebugFeature() {
     monitorSelect.value = monitors.some((monitor) => monitor.name === selected) ? selected : "";
   }
 
+  function readImportance() {
+    return importanceSelect?.value || "normal";
+  }
+
   async function publish(message) {
     try {
       await messagePublish(message);
@@ -344,7 +369,7 @@ export async function initDebugFeature() {
       const level = button.dataset.debugLevel;
       lastLevel = level;
       const suffix = level.charAt(0).toUpperCase() + level.slice(1);
-      void publish({ level, i18nKey: `settings.debug.sample${suffix}`, origin: "frontend" });
+      void publish({ level, importance: readImportance(), i18nKey: `settings.debug.sample${suffix}`, origin: "frontend" });
     });
   }
 
@@ -354,7 +379,7 @@ export async function initDebugFeature() {
       textInput?.focus();
       return;
     }
-    void publish({ level: lastLevel, text, origin: "frontend" });
+    void publish({ level: lastLevel, importance: readImportance(), text, origin: "frontend" });
     if (textInput) textInput.value = "";
   });
 
@@ -426,6 +451,17 @@ export async function initDebugFeature() {
     showError(t("settings.debug.sendFailed"));
   }
 
+  // 横幅体检要能盯着屏上格子换位，展开时每秒刷新一次，切走就停。
+  const geometryTimer = window.setInterval(() => {
+    if (!panel.hidden) void refreshGeometry();
+  }, 1000);
+
+  // 启动时横幅还是空的，读数会停在那一刻；切到本页要立刻补一次，不等下一个 1s 周期。
+  const panelWatcher = new MutationObserver(() => {
+    if (!panel.hidden) void refreshGeometry();
+  });
+  panelWatcher.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+
   let unlisten = null;
   try {
     unlisten = await onThemeChanged(() => {
@@ -436,6 +472,8 @@ export async function initDebugFeature() {
   }
 
   return () => {
+    window.clearInterval(geometryTimer);
+    panelWatcher.disconnect();
     clearTimeout(saveTimer);
     window.clearTimeout(confirmTimer);
     if (typeof unlisten === "function") unlisten();

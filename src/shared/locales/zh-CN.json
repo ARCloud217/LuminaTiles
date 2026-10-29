@@ -102,6 +102,15 @@
       "bannerVisible": "窗口可见",
       "bannerRect": "横幅矩形",
       "bannerCursor": "光标位置",
+      "importance": "重要级",
+      "importanceHigh": "高",
+      "importanceNormal": "中",
+      "importanceLow": "低",
+      "bannerEpoch": "时间线版本",
+      "bannerQueueCount": "队列条数",
+      "bannerQueueHead": "队首消息",
+      "bannerSlots": "屏上格子",
+      "bannerSlotEmpty": "无",
       "bannerMissing": "尚未测量",
       "bannerMonitor": "显示器",
       "monitorFollow": "跟随光标所在屏幕",
@@ -146,5 +155,8 @@
     "tooltip": "LuminaTiles",
     "openMain": "打开主窗口",
     "quit": "退出 LuminaTiles"
+  },
+  "banner": {
+    "queueCount": "还有 {count} 条消息排队"
   }
 }

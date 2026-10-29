@@ -39,9 +39,9 @@ pub fn run() {
             features::banner::banner_settings,
             features::banner::update_banner_settings,
             features::banner::banner_ready,
-            features::banner::banner_done,
+            features::banner::banner_report,
+            features::banner::banner_idle,
             features::banner::banner_clear,
-            features::banner::banner_resize,
             features::banner::banner_show,
             features::banner::banner_geometry,
             features::debug::reset_app_data_and_exit

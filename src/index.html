@@ -289,6 +289,14 @@
                 <button type="button" class="button button--ghost" data-debug-level="error" data-i18n="settings.debug.levelError"></button>
               </div>
               <div class="debug__row">
+                <label class="debug__label" for="debug-importance" data-i18n="settings.debug.importance"></label>
+                <select class="field__control debug__select" id="debug-importance" data-debug-importance>
+                  <option value="high" data-i18n="settings.debug.importanceHigh"></option>
+                  <option value="normal" data-i18n="settings.debug.importanceNormal"></option>
+                  <option value="low" data-i18n="settings.debug.importanceLow"></option>
+                </select>
+              </div>
+              <div class="debug__row">
                 <input class="field__control debug__input" type="text" data-debug-text data-i18n-aria-label="settings.debug.customPlaceholder" />
                 <button type="button" class="button" data-debug-action="sendCustom" data-i18n="settings.debug.send"></button>
                 <button type="button" class="button button--ghost" data-debug-action="clearQueue" data-i18n="settings.debug.clearQueue"></button>
@@ -335,6 +343,22 @@
                 <div class="debug__row">
                   <span class="debug__label" data-i18n="settings.debug.bannerCursor"></span>
                   <span class="debug__value" data-debug-geometry="cursor"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerEpoch"></span>
+                  <span class="debug__value" data-debug-geometry="epoch"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerQueueCount"></span>
+                  <span class="debug__value" data-debug-geometry="queueCount"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerQueueHead"></span>
+                  <span class="debug__value" data-debug-geometry="queueHead"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerSlots"></span>
+                  <span class="debug__value" data-debug-geometry="slots"></span>
                 </div>
               </div>
             </section>

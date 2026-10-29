@@ -102,6 +102,15 @@
       "bannerVisible": "Window visible",
       "bannerRect": "Banner rect",
       "bannerCursor": "Cursor",
+      "importance": "Importance",
+      "importanceHigh": "High",
+      "importanceNormal": "Normal",
+      "importanceLow": "Low",
+      "bannerEpoch": "Epoch",
+      "bannerQueueCount": "Queued",
+      "bannerQueueHead": "Queue head",
+      "bannerSlots": "On-screen slots",
+      "bannerSlotEmpty": "None",
       "bannerMissing": "Not measured yet",
       "bannerMonitor": "Monitor",
       "monitorFollow": "Follow the cursor's monitor",
@@ -146,5 +155,8 @@
     "tooltip": "LuminaTiles",
     "openMain": "Open main window",
     "quit": "Quit LuminaTiles"
+  },
+  "banner": {
+    "queueCount": "{count} more messages queued"
   }
 }

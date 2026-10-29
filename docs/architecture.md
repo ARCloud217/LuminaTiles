@@ -39,7 +39,7 @@ src/
       settings.css
     banner/
       index.html                 # 横幅窗页面
-      index.js                   # 显示队列、退场、光标淡化响应
+      index.js                   # 渲染格子、翻译、动画、回传矩形与高度
       styles.css
     debug/
       index.js                   # 设置坞 03 调试页读数与自检动作
@@ -68,8 +68,9 @@ src-tauri/src/
   settings.rs                    # settings.json 共享读写：read_section / patch，保留其它顶层键
   features/lock_indicator.rs     # 按键提示：开关状态轮询、Insert 键盘钩子、设置持久化、窗口定位与显隐
   features/theme.rs              # 主题种子校验与持久化、系统强调色 / 明暗读取、原生标题栏同步
-  features/messages.rs           # 消息路由：id 分配、800ms 去重合并、广播 lumina:message
-  features/banner.rs             # 横幅窗口：定位显隐、光标轮询（悬停淡化 / 点击消失）、尺寸回传
+  features/messages.rs           # 消息路由：id 分配、800ms 去重合并、重要级、广播 lumina:message
+  features/banner/mod.rs         # 横幅窗口：调度线程、定位显隐、光标轮询与命中、命令注册
+  features/banner/scheduler.rs   # 横幅纯调度核心：池 / 队列 / 重要级排序 / 宽度占比 / 计时（含单测）
   features/debug.rs              # 调试页危险区：清库并退出
   features/tray.rs               # 系统托盘：图标、左右键菜单、打开主窗口、退出；文案按系统 UI 语言选取
 ```
@@ -96,6 +97,7 @@ src-tauri/src/
 - 设置坞：左侧是分组导航（`.settings__rail`，当前是「按键提示」「主要设置」「调试」三组），右侧是按组切换的面板（`.settings__panel[data-settings-panel]`）；新增功能只需追加一组 tab 与面板，切换由 `src/main.js` 的 `initSettingsNav()` 统一驱动。
 - 动态设计：顶栏时钟每秒走字、状态点脉动、点阵光标框选与余光、三段式入场位移；位移类动效收敛在 `shell.css` 的 keyframes 与过渡里，`prefers-reduced-motion` 时停用。
 - 交互设计：按钮切角（`clip-path`）、`focus-visible` 统一 1px 信号色描边、滑杆为细轨 + 硬边方形拇指、输入控件硬边 2px 圆角。
+- 横幅：贴屏顶的整条，左侧 44px 队列计数槽 + 最多 3 个格子；宽度占比与挤占由 Rust 调度器决定（重要级高者居中且最宽），页面只负责渲染与测量，详见 [features/banner.md](features/banner.md)。
 - 字体分工：`--font-family-base` 与 `--font-family-display` 首位是打包的 HarmonyOS Sans SC（回退 Bahnschrift SemiCondensed / Segoe UI Variable），`--font-family-mono`（Cascadia Mono）承担时钟、数值与字段标签。
 
 ## 命令与事件
@@ -106,15 +108,16 @@ src-tauri/src/
 | --- | --- |
 | 按键提示 | `lock_indicator_status` / `lock_indicator_settings` / `update_lock_indicator_settings` / `reset_lock_indicator_settings` / `preview_lock_indicator` / `lock_indicator_monitors` / `lock_indicator_resize` |
 | 主题 | `theme_settings` / `update_theme_settings` / `reset_theme_settings` / `system_theme` |
-| 消息 | `message_publish` / `message_dismiss` |
-| 横幅 | `banner_settings` / `update_banner_settings` / `banner_ready` / `banner_done` / `banner_clear` / `banner_resize` / `banner_show` / `banner_geometry` |
+| 消息 | `message_publish`（可带 `importance`）/ `message_dismiss` |
+| 横幅 | `banner_settings` / `update_banner_settings` / `banner_ready` / `banner_report` / `banner_idle` / `banner_clear` / `banner_show` / `banner_geometry` |
 | 调试 | `reset_app_data_and_exit` |
 
 | 事件 | 方向 | 说明 |
 | --- | --- | --- |
 | `lumina:message` / `lumina:message-dismissed` | Rust → 全部窗口 | 消息总线，横幅页是唯一显示出口 |
 | `theme:changed` | Rust → 全部窗口 | 种子或明暗基调变化，各窗口即时换肤 |
-| `banner:message` / `banner:clear` / `banner:hover` / `banner:dismiss` / `banner:settings` | Rust → 横幅页 | 显示请求、清空、悬停与点击、设置变更 |
+| `banner:state` | Rust → 横幅页 | 唯一的显示真相：`epoch`、`slots`（消息 + 宽度）、`queueCount` |
+| `banner:hover` | Rust → 横幅页 | 光标进出整条，页面据此淡化 |
 
 ## 设计令牌
 

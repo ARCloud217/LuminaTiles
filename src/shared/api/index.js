@@ -125,24 +125,24 @@ export async function saveBannerSettings(settings) {
   return core().invoke("update_banner_settings", { settings });
 }
 
-/** 横幅页事件已订阅完毕的握手；后端会补发缓存的消息。 */
+/** 横幅页事件已订阅完毕的握手；后端会补发当前快照。 */
 export async function bannerReady() {
   return core().invoke("banner_ready");
 }
 
-/** 队列已空：收窗。 */
-export async function bannerDone() {
-  return core().invoke("banner_done");
+/** 回传横幅几何：内容高度与每格矩形（CSS 逻辑像素，相对窗口内容区）。 */
+export async function bannerReport(epoch, height, slots) {
+  return core().invoke("banner_report", { epoch, height, slots });
 }
 
-/** 清空横幅队列与缓存。 */
+/** 退场播完、可以收窗；池里还有消息时后端会忽略。 */
+export async function bannerIdle() {
+  return core().invoke("banner_idle");
+}
+
+/** 清空横幅：屏上与队列一起丢。 */
 export async function bannerClear() {
   return core().invoke("banner_clear");
-}
-
-/** 同步横幅内容高度（逻辑像素）。 */
-export async function bannerResize(height) {
-  return core().invoke("banner_resize", { height });
 }
 
 /** 订阅消息广播。 */
@@ -155,27 +155,14 @@ export async function onMessageDismissed(handler) {
   return events().listen("lumina:message-dismissed", (event) => handler(event.payload));
 }
 
-/** 订阅横幅消息与清空（横幅页专用）。 */
-export async function onBannerMessage(handler) {
-  return events().listen("banner:message", (event) => handler(event.payload));
+/** 订阅横幅快照（横幅页专用）：屏上格子、每格宽度与队列条数。 */
+export async function onBannerState(handler) {
+  return events().listen("banner:state", (event) => handler(event.payload));
 }
 
-export async function onBannerClear(handler) {
-  return events().listen("banner:clear", () => handler());
-}
-
-/** 订阅横幅设置变更（横幅页用它刷新默认停留时长）。 */
-export async function onBannerSettings(handler) {
-  return events().listen("banner:settings", (event) => handler(event.payload));
-}
-
-/** 订阅光标悬停判定与点击消失。 */
+/** 订阅光标是否落在横幅上（整条淡化）。 */
 export async function onBannerHover(handler) {
   return events().listen("banner:hover", (event) => handler(event.payload));
-}
-
-export async function onBannerDismiss(handler) {
-  return events().listen("banner:dismiss", () => handler());
 }
 
 /** 调试页体检：横幅窗口矩形、光标位置与可见性。 */

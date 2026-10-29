@@ -232,6 +232,8 @@ Rust **不**管显示节奏，只管路由与去重，外加一件窗口级的�
 
 ## 7. 顶部横幅（通知样式 1）
 
+> 已被 [2026-10-29-banner-priority-slots-design.md](./2026-10-29-banner-priority-slots-design.md) 取代：横幅现在最多并排 3 条，显示节奏、队列、宽度占比、计时与点击命中都移到 Rust 调度器，页面只渲染与测量。本节保留作历史记录，其中的 `banner:message` / `banner_done` / `banner_resize` / `banner:clear` / `banner:settings` 已下线。
+
 ### 7.1 窗口
 
 ```json

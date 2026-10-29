@@ -1,176 +1,197 @@
-// 横幅：唯一 display sink。显示队列在这里，窗口何时出现由 Rust 掌握，
-// 这里只决定每条播多久、下一条什么时候播。
+// 横幅页：只负责把 Rust 下发的快照画出来（渲染、翻译、动画、量矩形回传）。
+// 谁上屏、谁排队、每格多宽、停多久，全部由 Rust 的调度器决定。
 
 import { t } from "../../shared/i18n/index.js";
 import {
-  bannerDone,
+  bannerIdle,
   bannerReady,
-  bannerResize,
-  getBannerSettings,
-  onBannerClear,
-  onBannerDismiss,
+  bannerReport,
   onBannerHover,
-  onBannerMessage,
-  onBannerSettings,
-  onMessageDismissed
+  onBannerState
 } from "../../shared/api/index.js";
 
-const MAX_QUEUE = 20;
-const EXIT_FALLBACK_MS = 400;
-const DEFAULT_DURATION_MS = 5000;
+/** 幽灵格收窄淡出的时长，和 styles.css 里的过渡保持一致。 */
+const GHOST_MS = 200;
+/** 整条上滑退场的兜底时长。 */
+const EXIT_FALLBACK_MS = 220;
 
-const section = document.querySelector("[data-banner]");
-const textNode = document.querySelector("[data-banner-text]");
-const metaNode = document.querySelector("[data-banner-meta]");
+const strip = document.querySelector("[data-banner]");
+const slotsNode = document.querySelector("[data-banner-slots]");
+const queueNode = document.querySelector("[data-banner-queue]");
+const queueCountNode = document.querySelector("[data-banner-queue-count]");
 
-const queue = [];
-let playing = false;
-let current = null;
-let exitNow = null;
-let defaultDuration = DEFAULT_DURATION_MS;
-// 光标是否停在横幅矩形内；后端只在变化时广播，所以本地留一份用于新消息重绘。
+let state = { epoch: 0, slots: [], queueCount: 0 };
 let pointerInside = false;
+let reportFrame = 0;
+let settleTimer = 0;
+let idleTimer = 0;
 
-function render(message) {
-  textNode.textContent = message.i18nKey
-    ? t(message.i18nKey, message.params)
-    : (message.text ?? "");
+function label(message) {
+  return message.i18nKey ? t(message.i18nKey, message.params) : (message.text ?? "");
+}
+
+function createCell(message) {
+  const cell = document.createElement("article");
+  cell.className = "cell";
+  cell.dataset.cell = "";
+  cell.dataset.id = message.id;
+
+  const signal = document.createElement("span");
+  signal.className = "cell__signal";
+  signal.setAttribute("aria-hidden", "true");
+
+  const content = document.createElement("div");
+  content.className = "cell__content";
+
+  const text = document.createElement("p");
+  text.className = "cell__text";
+  // 同屏可能有多条，统一用 polite 播报，避免打断正在朗读的内容。
+  text.setAttribute("role", "status");
+  text.setAttribute("aria-live", "polite");
+
+  const meta = document.createElement("span");
+  meta.className = "cell__meta";
+  meta.hidden = true;
+
+  content.append(text, meta);
+  cell.append(signal, content);
+  return cell;
+}
+
+/** 写内容、等级与宽度；顺序用 flex order 控制，避免移动节点打断宽度过渡。 */
+function paint(cell, message, index) {
+  cell.dataset.level = message.level;
+  cell.dataset.importance = message.importance;
+  cell.style.order = String(index);
+  const width = Number(message.width);
+  cell.style.flexBasis = Number.isFinite(width) ? `${width}%` : "0%";
+
+  const text = cell.querySelector(".cell__text");
+  const next = label(message);
+  if (text.textContent !== next) text.textContent = next;
+
+  const meta = cell.querySelector(".cell__meta");
   const merged = Number(message.count) > 1;
-  metaNode.hidden = !merged;
-  metaNode.textContent = merged ? `×${message.count}` : "";
-  section.dataset.level = message.level;
-  section.classList.toggle("is-dimmed", pointerInside);
+  meta.hidden = !merged;
+  meta.textContent = merged ? `×${message.count}` : "";
 }
 
-function waitForExit() {
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      section.removeEventListener("transitionend", onEnd);
-      clearTimeout(timer);
-      resolve();
-    };
-    const onEnd = (event) => {
-      if (event.target === section) finish();
-    };
-    const timer = setTimeout(finish, EXIT_FALLBACK_MS);
-    section.addEventListener("transitionend", onEnd);
+/** 离场：钉在原位收窄淡出，不参与命中也不再上报矩形。 */
+function ghostify(cell) {
+  const box = slotsNode.getBoundingClientRect();
+  const rect = cell.getBoundingClientRect();
+  const width = rect.width;
+  cell.classList.add("cell--ghost");
+  cell.style.order = "";
+  cell.style.flexBasis = "";
+  cell.style.left = `${rect.left - box.left}px`;
+  cell.style.top = `${rect.top - box.top}px`;
+  cell.style.width = `${width}px`;
+  // 先落定起始宽度，再触发过渡，否则浏览器会把两步合成一跳。
+  void cell.offsetWidth;
+  requestAnimationFrame(() => {
+    cell.style.width = "0px";
+    cell.style.opacity = "0";
   });
+  setTimeout(() => cell.remove(), GHOST_MS);
 }
 
-async function play(message) {
-  current = message;
-  render(message);
-  // 先回到 idle 再强制重排，保证每条都有独立的入场过渡。
-  section.dataset.state = "idle";
-  void section.offsetHeight;
-  section.dataset.state = "shown";
-
-  const duration = Number(message.durationMs) > 0 ? Number(message.durationMs) : defaultDuration;
-  await new Promise((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      exitNow = null;
-      resolve();
-    };
-    const timer = setTimeout(finish, duration);
-    exitNow = finish;
+function apply(next) {
+  state = next;
+  const existing = new Map(
+    [...slotsNode.querySelectorAll("[data-cell]")].map((node) => [node.dataset.id, node])
+  );
+  const ids = new Set(next.slots.map((slot) => slot.id));
+  for (const [id, node] of existing) {
+    if (!ids.has(id)) ghostify(node);
+  }
+  next.slots.forEach((message, index) => {
+    const cell = existing.get(message.id) ?? createCell(message);
+    if (!cell.isConnected) slotsNode.append(cell);
+    paint(cell, message, index);
   });
 
-  current = null;
-  section.dataset.state = "leaving";
-  await waitForExit();
+  const count = Number(next.queueCount) || 0;
+  queueCountNode.textContent = count > 9 ? "9+" : String(count);
+  queueNode.dataset.empty = count > 0 ? "false" : "true";
+  // 单看数字读不出含义，给读屏补一句完整描述。
+  queueNode.setAttribute("aria-label", t("banner.queueCount", { count }));
+  strip.classList.toggle("is-dimmed", pointerInside);
+  if (next.slots.length > 0) strip.dataset.state = "shown";
 }
 
-/** 队列空了就让 Rust 收窗；播放中再有新消息会接着播，不闪。 */
-async function drain() {
-  if (playing) return;
-  playing = true;
-  try {
-    while (queue.length > 0) {
-      await play(queue.shift());
+/** 量内容高度与每格矩形回传；Rust 只接受当前 epoch 的报告。 */
+function report() {
+  const height = Math.ceil(strip.getBoundingClientRect().height);
+  if (!height) return;
+  const slots = [...slotsNode.querySelectorAll("[data-cell]:not(.cell--ghost)")].map((node) => {
+    const rect = node.getBoundingClientRect();
+    return {
+      id: node.dataset.id,
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height
+    };
+  });
+  bannerReport(state.epoch, height, slots).catch((error) =>
+    console.error("[lumina-tiles] 横幅几何同步失败", error)
+  );
+}
+
+function scheduleReport() {
+  cancelAnimationFrame(reportFrame);
+  reportFrame = requestAnimationFrame(report);
+  // 宽度过渡结束后再量一次，命中矩形才和最终布局一致。
+  clearTimeout(settleTimer);
+  settleTimer = setTimeout(report, 240);
+}
+
+/** 池与队列都空：等幽灵格收完，整条上滑，再让后端收窗。 */
+function maybeIdle() {
+  clearTimeout(idleTimer);
+  if (state.slots.length > 0 || state.queueCount > 0) return;
+  idleTimer = setTimeout(async () => {
+    if (state.slots.length > 0 || state.queueCount > 0) return;
+    strip.dataset.state = "leaving";
+    await new Promise((resolve) => setTimeout(resolve, EXIT_FALLBACK_MS));
+    if (state.slots.length > 0 || state.queueCount > 0) return;
+    strip.dataset.state = "idle";
+    try {
+      await bannerIdle();
+    } catch (error) {
+      console.error("[lumina-tiles] 横幅收窗失败", error);
     }
-    section.dataset.state = "idle";
-    await bannerDone();
-  } finally {
-    playing = false;
-    if (queue.length > 0) drain();
-  }
+  }, GHOST_MS);
 }
 
-function enqueue(message) {
-  // 去重合并：同一条消息只更新计数，不排队第二条。
-  if (current && message.id === current.id) {
-    current.count = message.count;
-    render(current);
-    return;
-  }
-  const queued = queue.findIndex((item) => item.id === message.id);
-  if (queued >= 0) {
-    queue[queued] = message;
-    return;
-  }
-  queue.push(message);
-  if (queue.length > MAX_QUEUE) {
-    // 上限 20，超出丢最旧，避免一次刷屏把队列越堆越长。
-    queue.splice(0, queue.length - MAX_QUEUE);
-  }
-  drain();
-}
-
-function clearQueue() {
-  queue.length = 0;
-  if (exitNow) exitNow();
-}
-
-/** 订阅事件、握手 ready、同步高度；返回清理函数。 */
 export async function initBannerFeature() {
-  try {
-    const settings = await getBannerSettings();
-    defaultDuration = Number(settings?.durationMs) || DEFAULT_DURATION_MS;
-  } catch (error) {
-    console.error("[lumina-tiles] 横幅设置读取失败，用默认时长", error);
-  }
-
   const stops = await Promise.all([
-    onBannerMessage((message) => enqueue(message)),
-    onBannerClear(() => clearQueue()),
+    onBannerState((payload) => {
+      if (!payload) return;
+      apply(payload);
+      scheduleReport();
+      maybeIdle();
+    }),
     onBannerHover((payload) => {
       pointerInside = Boolean(payload?.inside);
-      section.classList.toggle("is-dimmed", pointerInside);
-    }),
-    onBannerDismiss(() => {
-      if (exitNow) exitNow();
-    }),
-    onMessageDismissed((payload) => {
-      if (current && payload?.id === current.id && exitNow) exitNow();
-    }),
-    onBannerSettings((settings) => {
-      defaultDuration = Number(settings?.durationMs) || DEFAULT_DURATION_MS;
+      strip.classList.toggle("is-dimmed", pointerInside);
     })
   ]);
 
-  let frame = 0;
-  const observer = new ResizeObserver(() => {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => {
-      const height = Math.ceil(section.getBoundingClientRect().height);
-      if (height > 0) bannerResize(height).catch((error) => console.error("[lumina-tiles] 横幅高度同步失败", error));
-    });
-  });
-  observer.observe(section);
+  const observer = new ResizeObserver(() => scheduleReport());
+  observer.observe(strip);
+  strip.addEventListener("transitionend", scheduleReport);
 
-  // 事件就绪后再握手，后端会把等待中的那条补发过来。
+  // 事件就绪后再握手，后端会把当前快照补发过来。
   await bannerReady();
 
   return () => {
-    cancelAnimationFrame(frame);
     observer.disconnect();
+    strip.removeEventListener("transitionend", scheduleReport);
+    cancelAnimationFrame(reportFrame);
+    clearTimeout(settleTimer);
+    clearTimeout(idleTimer);
     for (const stop of stops) stop();
   };
 }
