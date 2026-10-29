@@ -1,12 +1,13 @@
 {
   "app": {
     "title": "LuminaTiles",
-    "initFailed": "The interface failed to start. Please restart the app."
+    "initFailed": "The interface failed to start. Please restart the app.",
+    "status": "Signal stable"
   },
   "brand": {
-    "eyebrow": "LUMINA TILES",
-    "name": "LuminaTiles",
-    "tagline": "Make your desktop a window full of light."
+    "eyebrow": "OTAZ DEV",
+    "name": "Lumina Tiles",
+    "tagline": "Turn your desktop into a field of light."
   },
   "settings": {
     "title": "Settings",
@@ -61,7 +62,7 @@
     "insert": "Insert",
     "on": "On",
     "off": "Off",
-    "unavailable": "Key hints are unavailable: the system did not allow the keyboard hook."
+    "unavailable": "Insert hints are unavailable: the system did not allow the keyboard hook. Caps Lock and Num Lock hints still work."
   },
   "tray": {
     "tooltip": "LuminaTiles",

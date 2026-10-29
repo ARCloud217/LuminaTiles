@@ -1,29 +1,32 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  /* 色彩：纸张暖白、墨黑文字，强调色取"光"的金铜 */
-  --color-bg: #f4f1ea;
-  --color-surface: #fffdf9;
-  --color-surface-raised: #ffffff;
-  --color-ink: #1a1c22;
-  --color-ink-muted: #6a6e78;
-  --color-line: #e2ddd2;
-  --color-accent: #b8802a;
-  --color-accent-soft: #f0e2c8;
-  --color-accent-highlight: #ffe9bd;
-  --color-accent-glow: rgba(196, 145, 55, 0.45);
-  --color-danger: #b3261e;
+  /* 色彩：近黑画布 + 单一信号琥珀，冷灰线条负责划分层次 */
+  --color-bg: #06070a;
+  --color-bg-deep: #030407;
+  --color-surface: #0a0d12;
+  --color-surface-raised: #10151c;
+  --color-ink: #e8edf3;
+  --color-ink-muted: #78838f;
+  --color-ink-faint: #4b5561;
+  --color-line: #1a2129;
+  --color-line-strong: #2b343f;
+  --color-accent: #e9a23b;
+  --color-accent-soft: rgba(233, 162, 59, 0.14);
+  --color-accent-glow: rgba(233, 162, 59, 0.35);
+  --color-danger: #ff6b57;
 
-  /* 字体：Windows 可变字体，展示体收紧字距 */
+  /* 字体：Bahnschrift 承担展示体，Cascadia Mono 承载数字与元信息 */
   --font-family-base: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", sans-serif;
-  --font-family-display: "Segoe UI Variable Display", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  --font-family-display: "Bahnschrift SemiCondensed", "Bahnschrift", "Segoe UI Variable Display", "Microsoft YaHei UI", sans-serif;
+  --font-family-mono: "Cascadia Mono", "Consolas", "Microsoft YaHei UI", monospace;
   --font-size-eyebrow: 0.6875rem;
-  --font-size-body: 0.9375rem;
-  --font-size-title: 2.75rem;
-  --letter-spacing-eyebrow: 0.18em;
-  --letter-spacing-display: -0.02em;
+  --font-size-body: 0.875rem;
+  --font-size-title: clamp(2.125rem, 4.6vw, 3.4rem);
+  --letter-spacing-eyebrow: 0.32em;
+  --letter-spacing-display: 0.02em;
 
-  /* 间距 / 圆角 / 阴影 */
+  /* 间距 / 硬边圆角 / 层次阴影 */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -31,28 +34,11 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-7: 3rem;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
-  --shadow-card: 0 1px 2px rgba(26, 28, 34, 0.06), 0 12px 32px -18px rgba(26, 28, 34, 0.35);
-  --shadow-toast: 0 10px 28px -10px rgba(0, 0, 0, 0.55);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --shadow-panel: 0 32px 80px -48px #000;
+  --shadow-toast: 0 18px 44px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --duration-fade: 160ms;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #13141a;
-    --color-surface: #1c1e26;
-    --color-surface-raised: #232630;
-    --color-ink: #f1efea;
-    --color-ink-muted: #9aa0ac;
-    --color-line: #2e313c;
-    --color-accent: #e4b363;
-    --color-accent-soft: #2c2618;
-    --color-accent-highlight: #4a3a1c;
-    --color-accent-glow: rgba(228, 179, 99, 0.4);
-    --color-danger: #f2b8b5;
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -18px rgba(0, 0, 0, 0.9);
-    --shadow-toast: 0 10px 28px -10px rgba(0, 0, 0, 0.8);
-  }
+  --ease-out: cubic-bezier(0.22, 0.8, 0.24, 1);
 }

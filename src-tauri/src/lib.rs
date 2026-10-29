@@ -25,7 +25,8 @@ pub fn run() {
             features::lock_indicator::update_lock_indicator_settings,
             features::lock_indicator::reset_lock_indicator_settings,
             features::lock_indicator::preview_lock_indicator,
-            features::lock_indicator::lock_indicator_monitors
+            features::lock_indicator::lock_indicator_monitors,
+            features::lock_indicator::lock_indicator_resize
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

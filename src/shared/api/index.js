@@ -17,9 +17,22 @@ function events() {
   return api;
 }
 
-/** 查询按键提示是否可用（键盘钩子是否安装成功）。 */
+// 启动期 WebView 可能在钩子线程回报结果前就发起查询，false 需带重试再下结论。
+const STATUS_RETRY_DELAY_MS = 400;
+const STATUS_MAX_ATTEMPTS = 5;
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** 查询按键提示是否可用（键盘钩子是否安装成功）；含启动竞态重试。 */
 export async function getLockIndicatorStatus() {
-  return Boolean(await core().invoke("lock_indicator_status"));
+  for (let attempt = 0; attempt < STATUS_MAX_ATTEMPTS; attempt += 1) {
+    const ready = await core().invoke("lock_indicator_status");
+    if (ready) return true;
+    if (attempt < STATUS_MAX_ATTEMPTS - 1) await delay(STATUS_RETRY_DELAY_MS);
+  }
+  return false;
 }
 
 /** 读取按键提示设置。 */
@@ -40,6 +53,11 @@ export async function resetLockIndicatorSettings() {
 /** 立刻弹一次提示，用于在设置面板里预览。 */
 export async function previewLockIndicator() {
   return core().invoke("preview_lock_indicator");
+}
+
+/** 按内容测量结果同步提示窗尺寸（逻辑像素）。 */
+export async function resizeLockIndicatorWindow(width, height) {
+  return core().invoke("lock_indicator_resize", { width, height });
 }
 
 /** 列出可用于定位的显示器。 */

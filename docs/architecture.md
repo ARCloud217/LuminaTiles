@@ -8,7 +8,7 @@ Tauri 2 应用，前端为无构建步骤的原生 ES module，通过 `withGloba
 
 | 窗口 label | 用途 | 说明 |
 | --- | --- | --- |
-| `main` | 主窗口 | 品牌页 + 设置面板，880×620；点关闭按钮隐藏到托盘，不退出进程 |
+| `main` | 主窗口 | 顶栏 + 展示区 + 设置坞三段式，880×620；点关闭按钮隐藏到托盘，不退出进程 |
 | `lock-indicator` | 按键提示 | 基础尺寸 236×72，随设置按比例缩放；透明、无边框、置顶、不抢焦点、点击穿透，启动时隐藏 |
 
 两个窗口共用同一套入口脚本，靠 `<html data-window>` 区分当前窗口。
@@ -24,7 +24,7 @@ src/
     i18n/index.js                # 语言包加载与 t()
     locales/zh-CN.json, en-US.json
     motion/index.js              # 通用动画预设（playMotionPreset / resetMotion）
-    styles/tokens.css            # 设计令牌（明暗两套）
+    styles/tokens.css            # 设计令牌（强制深色，单一信号色）
     styles/shell.css             # 主窗口布局与组件样式
     styles/motion.css            # 动画预设的 keyframes 与 data 属性驱动
   features/
@@ -67,9 +67,18 @@ src-tauri/src/
 
 所有用户可见文本来自 `src/shared/locales/*.json`：静态文本用 `data-i18n`，动态文本用 `t()`。`app.title` 同时作为两个窗口的文档标题。
 
+## 视觉语言
+
+界面走「新极简 + 科幻控制台」：近黑画布、单一信号琥珀（`--color-accent`）、冷灰细线划分层次，不使用图片资源，所有图形都由 CSS/JS 绘制。
+
+- 平面构成：主窗口为「顶栏 / 展示区 / 设置坞」三段式；展示区左列排版（eyebrow + 巨型展示体 + 说明），右列是 9×6 的 `lattice` 点阵：静态细格 + 一条 `.lattice__beam` 循环扫过，第 23 格常亮为焦点。
+- 动态设计：顶栏时钟每秒走字、状态点脉动、点阵扫光带、三段式入场位移；全部收敛在 `shell.css` 的 keyframes 内，`prefers-reduced-motion` 时停用。
+- 交互设计：按钮切角（`clip-path`）、`focus-visible` 统一 1px 信号色描边、滑杆为细轨 + 硬边方形拇指、输入控件硬边 2px 圆角。
+- 字体分工：`--font-family-display`（Bahnschrift）承担品牌与按钮，`--font-family-mono`（Cascadia Mono）承担时钟、数值与字段标签，正文用 Segoe UI Variable。
+
 ## 设计令牌
 
-颜色、字体、间距、圆角、阴影全部定义在 `src/shared/styles/tokens.css`，包含 `prefers-color-scheme: dark` 覆盖。新增样式复用令牌，不写孤立视觉值。
+颜色、字体、间距、圆角、阴影全部定义在 `src/shared/styles/tokens.css`，强制深色（`color-scheme: dark`），不再随系统切换明暗。新增样式复用令牌，不写孤立视觉值。
 
 ## 开发调试
 

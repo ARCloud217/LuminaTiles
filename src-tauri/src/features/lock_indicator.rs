@@ -2,7 +2,7 @@
 //! 按用户设置的位置、大小、色彩与动画弹出提示窗，并在短暂停留后自动隐藏。
 
 use std::fs;
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::mpsc::{self, Sender, SyncSender, TrySendError};
 use std::sync::{OnceLock, RwLock};
 use std::thread;
@@ -37,9 +37,9 @@ const STATE_POLL_INTERVAL: Duration = Duration::from_millis(100);
 const CURSOR_OFFSET: f64 = 28.0;
 /// 九宫格锚点与屏幕边缘的距离（逻辑像素）
 const ANCHOR_MARGIN: f64 = 16.0;
-/// 提示窗基准尺寸（逻辑像素），实际尺寸按缩放比例计算
-const BASE_WIDTH: f64 = 236.0;
-const BASE_HEIGHT: f64 = 72.0;
+/// 提示窗初始尺寸（逻辑像素）；页面加载后由前端测量卡片内容并经 lock_indicator_resize 更新
+const BASE_WIDTH: u32 = 236;
+const BASE_HEIGHT: u32 = 72;
 
 const SETTINGS_FILE: &str = "settings.json";
 const MIN_SCALE: f32 = 0.8;
@@ -58,6 +58,9 @@ static INSERT_ON: AtomicBool = AtomicBool::new(false);
 static REVISION: AtomicU64 = AtomicU64::new(0);
 /// 钩子回调到提示线程的队列；容量有限，避免异常情况下堆积。
 static QUEUE: OnceLock<SyncSender<(&'static str, bool)>> = OnceLock::new();
+/// 提示窗当前逻辑尺寸，前端测量卡片内容后同步，定位夹取也用它。
+static TOAST_WIDTH: AtomicU32 = AtomicU32::new(BASE_WIDTH);
+static TOAST_HEIGHT: AtomicU32 = AtomicU32::new(BASE_HEIGHT);
 /// 当前生效的设置；主窗口与提示窗共用同一份。
 static SETTINGS: OnceLock<RwLock<LockIndicatorSettings>> = OnceLock::new();
 
@@ -184,11 +187,41 @@ pub fn init(app: AppHandle) {
     let (sender, receiver) = mpsc::channel();
     thread::spawn(move || run_hook_loop(sender));
 
-    let installed = matches!(receiver.recv_timeout(Duration::from_secs(2)), Ok(Ok(())));
+    // 必须等钩子线程回报结果，不能用短超时竞速：
+    // 机器繁忙时线程尚未被调度，2 秒超时会先返回，出现"钩子实际安装成功却报告不可用"。
+    // 兜底上限只防钩子线程被卡死导致启动挂起，正常运行不会触发。
+    let installed = match receiver.recv_timeout(Duration::from_secs(10)) {
+        Ok(Ok(())) => true,
+        Ok(Err(error)) => {
+            eprintln!("[lumina-tiles] 键盘钩子安装失败：{error}");
+            false
+        }
+        Err(error) => {
+            eprintln!("[lumina-tiles] 键盘钩子线程未回报结果：{error}");
+            false
+        }
+    };
     AVAILABLE.store(installed, Ordering::Relaxed);
-    if !installed {
-        eprintln!("[lumina-tiles] 键盘钩子安装失败，按键提示不可用");
+}
+
+/// 前端按内容测量卡片后同步提示窗尺寸（逻辑像素），同时供定位夹取使用。
+#[tauri::command]
+pub fn lock_indicator_resize(app: AppHandle, width: u32, height: u32) -> Result<(), String> {
+    if !(40..=1200).contains(&width) || !(24..=400).contains(&height) {
+        return Err(format!("提示窗尺寸超出合理范围：{width}x{height}"));
     }
+    TOAST_WIDTH.store(width, Ordering::Relaxed);
+    TOAST_HEIGHT.store(height, Ordering::Relaxed);
+    if let Some(window) = app.get_webview_window(WINDOW_LABEL) {
+        window
+            .set_size(LogicalSize::new(f64::from(width), f64::from(height)))
+            .map_err(|error| format!("提示窗尺寸设置失败：{error}"))?;
+        // 正在显示时尺寸变了（如开/关文案宽度不同），重新按锚点夹取位置。
+        if window.is_visible().unwrap_or(false) {
+            position_window(&app, &window, &current_settings());
+        }
+    }
+    Ok(())
 }
 
 /// 供前端查询按键提示是否可用。
@@ -260,7 +293,6 @@ fn apply_and_store(
         *guard = normalized.clone();
     }
     if let Some(window) = app.get_webview_window(WINDOW_LABEL) {
-        apply_window_size(&window, &normalized);
         if let Err(error) = window.emit(EVENT_SETTINGS, normalized.clone()) {
             eprintln!("[lumina-tiles] 设置事件发送失败：{error}");
         }
@@ -443,15 +475,18 @@ fn publish(key: &'static str, active: bool) {
     };
 
     let settings = current_settings();
-    apply_window_size(&window, &settings);
+
+    // 先送文案让前端重新测量尺寸，再定位显示；顺序颠倒会让窗口先按旧尺寸出现再收缩跳动。
+    if let Err(error) = window.emit(EVENT_STATE, LockStatePayload { key, active }) {
+        eprintln!("[lumina-tiles] 按键提示事件发送失败：{error}");
+    }
+    // 提示线程允许短暂等待；给前端一个测量 + resize 往返的时间。
+    thread::sleep(Duration::from_millis(16));
     position_window(app, &window, &settings);
 
     if let Err(error) = window.show() {
         eprintln!("[lumina-tiles] 按键提示窗口显示失败：{error}");
         return;
-    }
-    if let Err(error) = window.emit(EVENT_STATE, LockStatePayload { key, active }) {
-        eprintln!("[lumina-tiles] 按键提示事件发送失败：{error}");
     }
 
     // 停留结束后先让前端播退场动画，动画播完再隐藏窗口。
@@ -483,20 +518,12 @@ fn publish(key: &'static str, active: bool) {
     });
 }
 
-fn apply_window_size(window: &WebviewWindow, settings: &LockIndicatorSettings) {
-    let width = BASE_WIDTH * f64::from(settings.scale);
-    let height = BASE_HEIGHT * f64::from(settings.scale);
-    if let Err(error) = window.set_size(LogicalSize::new(width, height)) {
-        eprintln!("[lumina-tiles] 按键提示窗口尺寸设置失败：{error}");
-    }
-}
-
 /// 按设置把提示窗摆到目标显示器的指定位置，并限制在该显示器范围内。
 fn position_window(app: &AppHandle, window: &WebviewWindow, settings: &LockIndicatorSettings) {
     let scale = window.scale_factor().unwrap_or(1.0);
-    // 用逻辑尺寸自行换算物理尺寸：刚 set_size 后 outer_size 可能仍是旧值。
-    let width = BASE_WIDTH * f64::from(settings.scale) * scale;
-    let height = BASE_HEIGHT * f64::from(settings.scale) * scale;
+    // 用已同步的逻辑尺寸换算物理尺寸：刚 set_size 后 outer_size 可能仍是旧值。
+    let width = f64::from(TOAST_WIDTH.load(Ordering::Relaxed)) * scale;
+    let height = f64::from(TOAST_HEIGHT.load(Ordering::Relaxed)) * scale;
     let cursor = cursor_point();
     let Some((left, top, area_width, area_height)) = monitor_area(app, settings, cursor) else {
         return;
@@ -604,7 +631,7 @@ fn monitor_area_of(monitor: &tauri::Monitor) -> (f64, f64, f64, f64) {
     )
 }
 
-/// 让提示窗不抢焦点、不接收鼠标事件，并按设置初始化尺寸。
+/// 让提示窗不抢焦点、不接收鼠标事件；窗口尺寸由前端测量内容后同步。
 pub fn init_window(app: &AppHandle) {
     let Some(window) = app.get_webview_window(WINDOW_LABEL) else {
         eprintln!("[lumina-tiles] 未找到按键提示窗口");
@@ -616,5 +643,7 @@ pub fn init_window(app: &AppHandle) {
     if let Err(error) = window.set_focusable(false) {
         eprintln!("[lumina-tiles] 按键提示窗口焦点设置失败：{error}");
     }
-    apply_window_size(&window, &current_settings());
+    if let Err(error) = window.set_size(LogicalSize::new(f64::from(BASE_WIDTH), f64::from(BASE_HEIGHT))) {
+        eprintln!("[lumina-tiles] 按键提示窗口初始尺寸设置失败：{error}");
+    }
 }

@@ -10,23 +10,31 @@
     <script type="module" src="main.js"></script>
   </head>
   <body>
-    <main class="shell">
-      <section class="brand">
-        <p class="brand__eyebrow" data-i18n="brand.eyebrow"></p>
-        <h1 class="brand__name" data-i18n="brand.name"></h1>
-        <p class="brand__tagline" data-i18n="brand.tagline"></p>
-      </section>
+    <main class="console">
+      <header class="topbar">
+        <span class="topbar__mark" aria-hidden="true"></span>
+        <span class="topbar__wordmark" aria-hidden="true" data-i18n="brand.name"></span>
+        <div class="topbar__meta">
+          <span class="topbar__status" data-i18n="app.status"></span>
+          <time class="topbar__clock" data-console-clock></time>
+        </div>
+      </header>
 
-      <div class="tiles" aria-hidden="true">
-        <div class="tile"></div>
-        <div class="tile tile--lit"></div>
-        <div class="tile"></div>
-        <div class="tile"></div>
-      </div>
+      <section class="stage">
+        <div class="stage__copy">
+          <p class="brand__eyebrow" data-i18n="brand.eyebrow"></p>
+          <h1 class="brand__name" data-i18n="brand.name"></h1>
+          <p class="brand__tagline" data-i18n="brand.tagline"></p>
+        </div>
+        <div class="lattice" data-lattice aria-hidden="true"></div>
+      </section>
 
       <section class="settings" aria-labelledby="settings-title">
         <div class="settings__header">
-          <h2 class="settings__title" id="settings-title" data-i18n="settings.title"></h2>
+          <div class="settings__heading">
+            <span class="settings__index" aria-hidden="true">01</span>
+            <h2 class="settings__title" id="settings-title" data-i18n="settings.title"></h2>
+          </div>
           <div class="settings__actions">
             <button type="button" class="button" data-settings-action="preview" data-i18n="settings.lockIndicator.preview"></button>
             <button type="button" class="button button--ghost" data-settings-action="reset" data-i18n="settings.lockIndicator.reset"></button>
@@ -39,7 +47,7 @@
             <p class="settings__hint" data-i18n="settings.lockIndicator.description"></p>
 
             <div class="settings__grid">
-              <div class="field">
+              <div class="field field--span-4">
                 <label class="field__label" for="setting-position" data-i18n="settings.lockIndicator.position"></label>
                 <select class="field__control" id="setting-position" data-setting="position">
                   <option value="cursor" data-i18n="settings.lockIndicator.positionCursor"></option>
@@ -55,44 +63,12 @@
                 </select>
               </div>
 
-              <div class="field">
+              <div class="field field--span-4">
                 <label class="field__label" for="setting-monitor" data-i18n="settings.lockIndicator.monitor"></label>
                 <select class="field__control" id="setting-monitor" data-setting="monitor"></select>
               </div>
 
-              <div class="field field--range">
-                <label class="field__label" for="setting-offset-x" data-i18n="settings.lockIndicator.offsetX"></label>
-                <div class="field__row">
-                  <input class="field__range" type="range" id="setting-offset-x" data-setting="offsetX" min="-200" max="200" step="2" value="0" />
-                  <output class="field__value" for="setting-offset-x" data-setting-value="offsetX"></output>
-                </div>
-              </div>
-
-              <div class="field field--range">
-                <label class="field__label" for="setting-offset-y" data-i18n="settings.lockIndicator.offsetY"></label>
-                <div class="field__row">
-                  <input class="field__range" type="range" id="setting-offset-y" data-setting="offsetY" min="-200" max="200" step="2" value="0" />
-                  <output class="field__value" for="setting-offset-y" data-setting-value="offsetY"></output>
-                </div>
-              </div>
-
-              <div class="field field--range">
-                <label class="field__label" for="setting-scale" data-i18n="settings.lockIndicator.size"></label>
-                <div class="field__row">
-                  <input class="field__range" type="range" id="setting-scale" data-setting="scale" min="80" max="160" step="5" value="100" />
-                  <output class="field__value" for="setting-scale" data-setting-value="scale"></output>
-                </div>
-              </div>
-
-              <div class="field field--range">
-                <label class="field__label" for="setting-opacity" data-i18n="settings.lockIndicator.opacity"></label>
-                <div class="field__row">
-                  <input class="field__range" type="range" id="setting-opacity" data-setting="opacity" min="30" max="100" step="1" value="100" />
-                  <output class="field__value" for="setting-opacity" data-setting-value="opacity"></output>
-                </div>
-              </div>
-
-              <div class="field">
+              <div class="field field--span-4">
                 <label class="field__label" for="setting-animation" data-i18n="settings.lockIndicator.animation"></label>
                 <select class="field__control" id="setting-animation" data-setting="animation">
                   <option value="none" data-i18n="settings.lockIndicator.motionNone"></option>
@@ -105,7 +81,39 @@
                 </select>
               </div>
 
-              <div class="field field--range">
+              <div class="field field--span-3 field--range">
+                <label class="field__label" for="setting-offset-x" data-i18n="settings.lockIndicator.offsetX"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-offset-x" data-setting="offsetX" min="-200" max="200" step="2" value="0" />
+                  <output class="field__value" for="setting-offset-x" data-setting-value="offsetX"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--range">
+                <label class="field__label" for="setting-offset-y" data-i18n="settings.lockIndicator.offsetY"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-offset-y" data-setting="offsetY" min="-200" max="200" step="2" value="0" />
+                  <output class="field__value" for="setting-offset-y" data-setting-value="offsetY"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--range">
+                <label class="field__label" for="setting-scale" data-i18n="settings.lockIndicator.size"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-scale" data-setting="scale" min="80" max="160" step="5" value="100" />
+                  <output class="field__value" for="setting-scale" data-setting-value="scale"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--range">
+                <label class="field__label" for="setting-opacity" data-i18n="settings.lockIndicator.opacity"></label>
+                <div class="field__row">
+                  <input class="field__range" type="range" id="setting-opacity" data-setting="opacity" min="30" max="100" step="1" value="100" />
+                  <output class="field__value" for="setting-opacity" data-setting-value="opacity"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-6 field--range">
                 <label class="field__label" for="setting-duration" data-i18n="settings.lockIndicator.duration"></label>
                 <div class="field__row">
                   <input class="field__range" type="range" id="setting-duration" data-setting="durationMs" min="120" max="600" step="20" value="180" />
@@ -113,7 +121,7 @@
                 </div>
               </div>
 
-              <div class="field field--color">
+              <div class="field field--span-3 field--color">
                 <span class="field__label" id="setting-accent-label" data-i18n="settings.lockIndicator.accent"></span>
                 <div class="field__row" role="group" aria-labelledby="setting-accent-label">
                   <input class="field__color" type="color" data-setting="accent" aria-labelledby="setting-accent-label" />
@@ -124,7 +132,7 @@
                 </div>
               </div>
 
-              <div class="field field--color">
+              <div class="field field--span-3 field--color">
                 <span class="field__label" id="setting-text-label" data-i18n="settings.lockIndicator.text"></span>
                 <div class="field__row" role="group" aria-labelledby="setting-text-label">
                   <input class="field__color" type="color" data-setting="text" aria-labelledby="setting-text-label" />
@@ -145,3 +153,4 @@
     </main>
   </body>
 </html>
+
