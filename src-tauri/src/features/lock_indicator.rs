@@ -1,7 +1,6 @@
 //! 按键提示：轮询系统开关状态检测 CapsLock / NumLock 的切换，用低级键盘钩子处理 Insert，
 //! 按用户设置的位置、大小、色彩与动画弹出提示窗，并在短暂停留后自动隐藏。
 
-use std::fs;
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering};
 use std::sync::mpsc::{self, Sender, SyncSender, TrySendError};
 use std::sync::{OnceLock, RwLock};
@@ -41,7 +40,7 @@ const ANCHOR_MARGIN: f64 = 16.0;
 const BASE_WIDTH: u32 = 236;
 const BASE_HEIGHT: u32 = 72;
 
-const SETTINGS_FILE: &str = "settings.json";
+const SETTINGS_SECTION: &str = "lockIndicator";
 const MIN_SCALE: f32 = 0.8;
 const MAX_SCALE: f32 = 1.6;
 const MIN_OPACITY: f32 = 0.3;
@@ -135,13 +134,6 @@ impl Default for LockIndicatorSettings {
             duration_ms: 180,
         }
     }
-}
-
-/// 配置文件顶层结构，给以后的其它功能留位置。
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase", default)]
-struct SettingsFile {
-    lock_indicator: LockIndicatorSettings,
 }
 
 #[derive(Clone, Serialize)]
@@ -331,42 +323,15 @@ fn is_hex_color(color: &str) -> bool {
     bytes.len() == 7 && bytes[0] == b'#' && bytes[1..].iter().all(u8::is_ascii_hexdigit)
 }
 
-fn settings_path(app: &AppHandle) -> Result<std::path::PathBuf, String> {
-    let dir = app
-        .path()
-        .app_config_dir()
-        .map_err(|error| format!("无法获取配置目录：{error}"))?;
-    Ok(dir.join(SETTINGS_FILE))
-}
-
 fn load_settings(app: &AppHandle) -> Result<LockIndicatorSettings, String> {
-    let path = settings_path(app)?;
-    let text = match fs::read_to_string(&path) {
-        Ok(text) => text,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-            return Ok(LockIndicatorSettings::default());
-        }
-        Err(error) => return Err(format!("设置读取失败（{}）：{error}", path.display())),
-    };
-    let file: SettingsFile =
-        serde_json::from_str(&text).map_err(|error| format!("设置解析失败：{error}"))?;
-    Ok(normalize(file.lock_indicator))
+    let stored: LockIndicatorSettings =
+        crate::settings::read_section(app, SETTINGS_SECTION)?;
+    Ok(normalize(stored))
 }
 
 fn save_settings(app: &AppHandle, settings: &LockIndicatorSettings) -> Result<(), String> {
-    let path = settings_path(app)?;
-    if let Some(dir) = path.parent() {
-        fs::create_dir_all(dir).map_err(|error| format!("无法创建配置目录：{error}"))?;
-    }
-    let file = SettingsFile {
-        lock_indicator: settings.clone(),
-    };
-    let text = serde_json::to_string_pretty(&file)
-        .map_err(|error| format!("设置序列化失败：{error}"))?;
-    // 先写临时文件再替换，避免写入中断留下半份配置。
-    let temp = path.with_extension("json.tmp");
-    fs::write(&temp, text).map_err(|error| format!("设置写入失败：{error}"))?;
-    fs::rename(&temp, &path).map_err(|error| format!("设置保存失败：{error}"))
+    // 只覆盖自己那节，保留 theme 等其它功能的配置。
+    crate::settings::patch(app, SETTINGS_SECTION, settings)
 }
 
 fn read_toggle_bit(vk: i32) -> bool {
