@@ -16,9 +16,9 @@
   --color-accent-glow: rgba(233, 162, 59, 0.35);
   --color-danger: #ff6b57;
 
-  /* 字体：Bahnschrift 承担展示体，Cascadia Mono 承载数字与元信息 */
-  --font-family-base: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", sans-serif;
-  --font-family-display: "Bahnschrift SemiCondensed", "Bahnschrift", "Segoe UI Variable Display", "Microsoft YaHei UI", sans-serif;
+  /* 字体：HarmonyOS Sans SC（打包三档）承担正文与展示体，Cascadia Mono 承载数字与元信息 */
+  --font-family-base: "HarmonyOS Sans SC", "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  --font-family-display: "HarmonyOS Sans SC", "Bahnschrift SemiCondensed", "Segoe UI Variable Display", "Microsoft YaHei UI", sans-serif;
   --font-family-mono: "Cascadia Mono", "Consolas", "Microsoft YaHei UI", monospace;
   --font-size-eyebrow: 0.6875rem;
   --font-size-body: 0.875rem;

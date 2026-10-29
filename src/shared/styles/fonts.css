@@ -1,0 +1,25 @@
+/* 打包的三档 HarmonyOS Sans SC：正文 400、小标题 500/600、展示体 700。
+   家族名与系统登记名一致，本机已安装时同样命中；volume 见 docs/superpowers/specs 设计文档 §5。 */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("../fonts/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("../fonts/HarmonyOS_Sans_SC_Medium.ttf") format("truetype");
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("../fonts/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

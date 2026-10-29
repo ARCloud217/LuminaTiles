@@ -179,7 +179,7 @@ Rust 命令 `system_theme` → `{ accent: "#rrggbb" | null, light: bool | null }
 
 合计约 23.5MB，存放 `src/shared/fonts/`，同目录放源许可 `LICENSE.txt`（Huawei Device Co., Ltd. HarmonyOS Sans Fonts License Agreement，允许随产品分发，需保留声明）。
 
-- `src/shared/styles/fonts.css` 里三个 `@font-face`，家族名统一 `HarmonyOS Sans SC`（与系统登记名一致，打包与已装两条路都能命中），`font-weight: 400 / 500 600 / 700`，`font-display: swap`，`src` 指向 `../fonts/*.ttf`（Vite 静态资源，Tauri 打包自动带入）；`npm run tauri build` 后确认安装包内存在三个 ttf。
+- `src/shared/styles/fonts.css` 里三个 `@font-face`，家族名统一 `HarmonyOS Sans SC`（与系统登记名一致，打包与已装两条路都能命中），`font-weight: 400 / 500 600 / 700`，`font-display: swap`，`src` 指向 `../fonts/*.ttf`；本项目 `frontendDist` 就是 `src/`（无打包器），相对路径直接生效，`cargo tauri build` 后确认安装包内存在三个 ttf。
 - 令牌：`--font-family-base` / `--font-family-display` 首位改为 `"HarmonyOS Sans SC"`，回退链 `"Segoe UI Variable Text"` → `"Segoe UI"` → `"Microsoft YaHei UI"` → `sans-serif`。`--font-family-mono` 保持 Cascadia Mono（时钟与数值需要等宽对齐，功能需求）。
 - 命中验证：`document.fonts.ready` 后用 canvas 与「不存在的家族」比宽度差（`document.fonts.check()` 返回 true 不可作为证据）；调试页显示「已命中 / 回退到 X」。
 - 不做子集化（本期）。若日后安装包体积成为问题，再用 `pyftsubset` 按实际字符集裁剪。
