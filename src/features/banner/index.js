@@ -11,6 +11,7 @@ import {
   onBannerDismiss,
   onBannerHover,
   onBannerMessage,
+  onBannerSettings,
   onMessageDismissed
 } from "../../shared/api/index.js";
 
@@ -148,6 +149,9 @@ export async function initBannerFeature() {
     }),
     onMessageDismissed((payload) => {
       if (current && payload?.id === current.id && exitNow) exitNow();
+    }),
+    onBannerSettings((settings) => {
+      defaultDuration = Number(settings?.durationMs) || DEFAULT_DURATION_MS;
     })
   ]);
 

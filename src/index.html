@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="shared/styles/theme.css" />
     <link rel="stylesheet" href="shared/styles/shell.css" />
     <link rel="stylesheet" href="features/lock-indicator/settings.css" />
+    <link rel="stylesheet" href="features/theme/settings.css" />
+    <link rel="stylesheet" href="features/debug/styles.css" />
     <script type="module" src="main.js"></script>
   </head>
   <body>
@@ -51,6 +53,30 @@
                 >
                   <span class="settings__tab-index" aria-hidden="true">01</span>
                   <span class="settings__tab-label" data-i18n="settings.lockIndicator.title"></span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="settings__tab"
+                  data-settings-tab="theme"
+                  aria-current="false"
+                  aria-controls="settings-panel-theme"
+                >
+                  <span class="settings__tab-index" aria-hidden="true">02</span>
+                  <span class="settings__tab-label" data-i18n="settings.theme.title"></span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="settings__tab"
+                  data-settings-tab="debug"
+                  aria-current="false"
+                  aria-controls="settings-panel-debug"
+                >
+                  <span class="settings__tab-index" aria-hidden="true">03</span>
+                  <span class="settings__tab-label" data-i18n="settings.debug.title"></span>
                 </button>
               </li>
             </ul>
@@ -171,6 +197,179 @@
           <p class="settings__status" role="status" data-settings-status hidden></p>
           <p class="shell__error" role="alert" data-lock-indicator-error hidden></p>
           <p class="shell__error" role="alert" data-init-error hidden></p>
+        </div>
+
+        <div class="settings__panel" id="settings-panel-theme" data-settings-panel="theme" hidden>
+          <header class="settings__panel-head">
+            <h2 class="settings__title" data-i18n="settings.theme.title"></h2>
+            <div class="settings__actions">
+              <button type="button" class="button button--ghost" data-theme-action="reset" data-i18n="settings.theme.reset"></button>
+            </div>
+          </header>
+
+          <p class="settings__hint" data-i18n="settings.theme.description"></p>
+
+          <form class="settings__form" data-theme-form>
+            <div class="settings__grid">
+              <div class="field field--span-3 field--color">
+                <label class="field__label" for="theme-primary-accent" data-i18n="settings.theme.primaryAccent"></label>
+                <div class="field__row">
+                  <input class="field__color" type="color" id="theme-primary-accent" data-theme-setting="primaryAccent" />
+                  <output class="field__value field__value--hex" data-theme-value="primaryAccent"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--color">
+                <label class="field__label" for="theme-secondary-accent" data-i18n="settings.theme.secondaryAccent"></label>
+                <div class="field__row">
+                  <input class="field__color" type="color" id="theme-secondary-accent" data-theme-setting="secondaryAccent" />
+                  <output class="field__value field__value--hex" data-theme-value="secondaryAccent"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--color">
+                <label class="field__label" for="theme-background-primary" data-i18n="settings.theme.backgroundPrimary"></label>
+                <div class="field__row">
+                  <input class="field__color" type="color" id="theme-background-primary" data-theme-setting="backgroundPrimary" />
+                  <output class="field__value field__value--hex" data-theme-value="backgroundPrimary"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-3 field--color">
+                <label class="field__label" for="theme-background-secondary" data-i18n="settings.theme.backgroundSecondary"></label>
+                <div class="field__row">
+                  <input class="field__color" type="color" id="theme-background-secondary" data-theme-setting="backgroundSecondary" />
+                  <output class="field__value field__value--hex" data-theme-value="backgroundSecondary"></output>
+                </div>
+              </div>
+
+              <div class="field field--span-4">
+                <label class="field__label" for="theme-tone" data-i18n="settings.theme.tone"></label>
+                <select class="field__control" id="theme-tone" data-theme-setting="tone">
+                  <option value="auto" data-i18n="settings.theme.toneAuto"></option>
+                  <option value="dark" data-i18n="settings.theme.toneDark"></option>
+                  <option value="light" data-i18n="settings.theme.toneLight"></option>
+                </select>
+              </div>
+
+              <div class="field field--span-4">
+                <span class="field__label" id="theme-follow-label" data-i18n="settings.theme.followSystem"></span>
+                <div class="field__row" role="group" aria-labelledby="theme-follow-label">
+                  <label class="checkbox">
+                    <input type="checkbox" data-theme-setting="followSystem" aria-labelledby="theme-follow-label" />
+                    <span data-i18n="settings.theme.followSystem"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <p class="settings__hint" data-theme-locked hidden data-i18n="settings.theme.seedsLocked"></p>
+          <p class="settings__status" role="status" data-theme-system hidden></p>
+          <p class="shell__error" role="alert" data-theme-error hidden></p>
+        </div>
+
+        <div class="settings__panel" id="settings-panel-debug" data-settings-panel="debug" hidden>
+          <header class="settings__panel-head">
+            <h2 class="settings__title" data-i18n="settings.debug.title"></h2>
+            <div class="settings__actions">
+              <button type="button" class="button button--ghost" data-debug-action="refresh" data-i18n="settings.debug.readSystem"></button>
+            </div>
+          </header>
+
+          <p class="settings__hint" data-i18n="settings.debug.description"></p>
+
+          <div class="debug">
+            <section class="debug__group" aria-labelledby="debug-messages-title">
+              <h3 class="debug__title" id="debug-messages-title" data-i18n="settings.debug.messages"></h3>
+              <div class="debug__row">
+                <button type="button" class="button button--ghost" data-debug-level="info" data-i18n="settings.debug.levelInfo"></button>
+                <button type="button" class="button button--ghost" data-debug-level="success" data-i18n="settings.debug.levelSuccess"></button>
+                <button type="button" class="button button--ghost" data-debug-level="warning" data-i18n="settings.debug.levelWarning"></button>
+                <button type="button" class="button button--ghost" data-debug-level="error" data-i18n="settings.debug.levelError"></button>
+              </div>
+              <div class="debug__row">
+                <input class="field__control debug__input" type="text" data-debug-text data-i18n-aria-label="settings.debug.customPlaceholder" />
+                <button type="button" class="button" data-debug-action="sendCustom" data-i18n="settings.debug.send"></button>
+                <button type="button" class="button button--ghost" data-debug-action="clearQueue" data-i18n="settings.debug.clearQueue"></button>
+              </div>
+              <p class="debug__meta" data-debug-count></p>
+            </section>
+
+            <section class="debug__group" aria-labelledby="debug-theme-title">
+              <h3 class="debug__title" id="debug-theme-title" data-i18n="settings.debug.theme"></h3>
+              <div class="debug__tokens" data-debug-tokens></div>
+              <div class="debug__rows" data-debug-contrast></div>
+              <div class="debug__rows">
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.systemAccent"></span>
+                  <span class="debug__value" data-debug-system-accent></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.systemTone"></span>
+                  <span class="debug__value" data-debug-system-tone></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="debug__group" aria-labelledby="debug-banner-title">
+              <h3 class="debug__title" id="debug-banner-title" data-i18n="settings.debug.banner"></h3>
+              <div class="debug__row">
+                <label class="debug__label" for="debug-banner-duration" data-i18n="settings.debug.duration"></label>
+                <input class="field__range debug__range" type="range" id="debug-banner-duration" data-debug-banner="durationMs" min="1000" max="30000" step="500" />
+                <output class="field__value" data-debug-value="durationMs"></output>
+              </div>
+              <div class="debug__row">
+                <label class="debug__label" for="debug-banner-monitor" data-i18n="settings.debug.bannerMonitor"></label>
+                <select class="field__control debug__select" id="debug-banner-monitor" data-debug-banner="monitor"></select>
+              </div>
+              <div class="debug__rows">
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerVisible"></span>
+                  <span class="debug__value" data-debug-geometry="visible"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerRect"></span>
+                  <span class="debug__value" data-debug-geometry="rect"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.bannerCursor"></span>
+                  <span class="debug__value" data-debug-geometry="cursor"></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="debug__group" aria-labelledby="debug-fonts-title">
+              <h3 class="debug__title" id="debug-fonts-title" data-i18n="settings.debug.fonts"></h3>
+              <div class="debug__rows">
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.fontState"></span>
+                  <span class="debug__value" data-debug-font="status"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.fontHit"></span>
+                  <span class="debug__value" data-debug-font="hit"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.fontFallback"></span>
+                  <span class="debug__value" data-debug-font="gap"></span>
+                </div>
+                <div class="debug__row">
+                  <span class="debug__label" data-i18n="settings.debug.fontStack"></span>
+                  <span class="debug__value" data-debug-font="stack"></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="debug__group debug__group--danger" aria-labelledby="debug-danger-title">
+              <h3 class="debug__title" id="debug-danger-title" data-i18n="settings.debug.danger"></h3>
+              <p class="settings__hint" data-i18n="settings.debug.wipeWarn"></p>
+              <div class="debug__row">
+                <button type="button" class="button button--danger" data-debug-action="wipe" data-i18n="settings.debug.relaunchWipe"></button>
+              </div>
+              <p class="shell__error" role="alert" data-debug-error hidden></p>
+            </section>
+          </div>
         </div>
       </section>
     </main>

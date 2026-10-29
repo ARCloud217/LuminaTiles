@@ -164,6 +164,11 @@ export async function onBannerClear(handler) {
   return events().listen("banner:clear", () => handler());
 }
 
+/** 订阅横幅设置变更（横幅页用它刷新默认停留时长）。 */
+export async function onBannerSettings(handler) {
+  return events().listen("banner:settings", (event) => handler(event.payload));
+}
+
 /** 订阅光标悬停判定与点击消失。 */
 export async function onBannerHover(handler) {
   return events().listen("banner:hover", (event) => handler(event.payload));
@@ -173,8 +178,12 @@ export async function onBannerDismiss(handler) {
   return events().listen("banner:dismiss", () => handler());
 }
 
-/** 发布时的默认停留时长跟随横幅设置：消息里 0 或缺省时由页面补。 */
-export async function resolveBannerDuration() {
-  const settings = await getBannerSettings();
-  return settings.durationMs;
+/** 调试页体检：横幅窗口矩形、光标位置与可见性。 */
+export async function getBannerGeometry() {
+  return core().invoke("banner_geometry");
+}
+
+/** 危险区：清除本地设置并退出进程。 */
+export async function resetAppDataAndExit() {
+  return core().invoke("reset_app_data_and_exit");
 }

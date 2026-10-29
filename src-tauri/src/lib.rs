@@ -42,7 +42,9 @@ pub fn run() {
             features::banner::banner_done,
             features::banner::banner_clear,
             features::banner::banner_resize,
-            features::banner::banner_show
+            features::banner::banner_show,
+            features::banner::banner_geometry,
+            features::debug::reset_app_data_and_exit
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

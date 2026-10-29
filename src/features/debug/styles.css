@@ -1,0 +1,143 @@
+/* 调试页：分组卡片 + 令牌色板，沿用设置坞的硬边与等宽标签语言 */
+.debug {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.debug__group {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-wash-soft);
+}
+
+.debug__group--danger {
+  border-color: color-mix(in oklab, var(--color-danger) 45%, var(--color-line));
+}
+
+.debug__title {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.debug__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 28px;
+}
+
+.debug__rows {
+  display: grid;
+  gap: 6px;
+}
+
+.debug__label {
+  font-family: var(--font-family-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.debug__value {
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  color: var(--color-ink);
+  word-break: break-all;
+}
+
+.debug__meta {
+  margin: 0;
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+}
+
+.debug__range {
+  flex: 1 1 180px;
+  max-width: 320px;
+}
+
+.debug__select {
+  flex: 0 1 320px;
+  min-width: 0;
+}
+
+.debug__input {
+  flex: 1 1 220px;
+  min-width: 0;
+  background-image: none;
+  padding-right: var(--space-3);
+}
+
+.debug__tokens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--space-2);
+}
+
+.debug__token {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: var(--space-2);
+  padding: 6px 8px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.debug__swatch {
+  grid-row: span 2;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--color-line-strong);
+}
+
+.debug__token-name {
+  font-family: var(--font-family-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+}
+
+.debug__token-rgb {
+  font-family: var(--font-family-mono);
+  font-size: 0.5625rem;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.debug__warn {
+  padding: 0 5px;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--color-danger) 26%, transparent);
+  color: var(--color-ink);
+  font-family: var(--font-family-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+}
+
+.button--danger {
+  background: color-mix(in oklab, var(--color-danger) 82%, var(--color-bg-deep));
+  color: var(--color-ink);
+}
+
+.button--danger:hover {
+  background: color-mix(in oklab, var(--color-danger) 92%, var(--color-ink));
+}
+
+.button--danger[data-confirming] {
+  box-shadow: inset 0 0 0 1px var(--color-ink);
+}

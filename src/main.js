@@ -3,6 +3,8 @@ import { initThemeFeature } from "./features/theme/index.js";
 import { initBannerFeature } from "./features/banner/index.js";
 import { initLockIndicatorFeature } from "./features/lock-indicator/index.js";
 import { initLockIndicatorSettingsFeature } from "./features/lock-indicator/settings.js";
+import { initThemeSettingsFeature } from "./features/theme/settings.js";
+import { initDebugFeature } from "./features/debug/index.js";
 
 // 功能注册表：windows 指定功能运行在哪些窗口，enabled 用于单独停用与调试，
 // beforeI18n 表示必须在语言包就绪前完成（主题要先落种子，避免首帧闪默认色）。
@@ -10,7 +12,9 @@ const FEATURES = [
   { id: "theme", enabled: true, windows: ["main", "banner", "lock-indicator"], beforeI18n: true, init: initThemeFeature },
   { id: "banner", enabled: true, window: "banner", init: initBannerFeature },
   { id: "lock-indicator", enabled: true, window: "lock-indicator", init: initLockIndicatorFeature },
-  { id: "lock-indicator-settings", enabled: true, window: "main", init: initLockIndicatorSettingsFeature }
+  { id: "lock-indicator-settings", enabled: true, window: "main", init: initLockIndicatorSettingsFeature },
+  { id: "theme-settings", enabled: true, window: "main", init: initThemeSettingsFeature },
+  { id: "debug", enabled: true, window: "main", init: initDebugFeature }
 ];
 
 const cleanups = [];

@@ -21,6 +21,7 @@ const EVENT_MESSAGE: &str = "banner:message";
 const EVENT_CLEAR: &str = "banner:clear";
 const EVENT_HOVER: &str = "banner:hover";
 const EVENT_DISMISS: &str = "banner:dismiss";
+const EVENT_SETTINGS: &str = "banner:settings";
 
 /// 可见时的光标轮询间隔：够跟上手速，又不至于明显吃 CPU。
 const VISIBLE_POLL_INTERVAL: Duration = Duration::from_millis(30);
@@ -281,6 +282,12 @@ pub fn update_banner_settings(app: AppHandle, settings: BannerSettings) -> Resul
     if let Ok(mut guard) = settings_lock().write() {
         *guard = settings.clone();
     }
+    // 横幅页缓存了默认停留时长，改完要主动通知，否则已开着的横幅页仍用旧值。
+    if let Some(window) = app.get_webview_window(WINDOW_LABEL) {
+        if let Err(error) = window.emit(EVENT_SETTINGS, &settings) {
+            eprintln!("[lumina-tiles] 横幅设置事件发送失败：{error}");
+        }
+    }
     Ok(settings)
 }
 
@@ -342,4 +349,21 @@ pub fn banner_resize(app: AppHandle, height: f64) {
 #[tauri::command]
 pub fn banner_show(app: AppHandle, message: Value) {
     show(&app, &message);
+}
+
+/// 调试页体检：横幅窗口矩形、光标位置与可见性，用来确认悬停/点击判定区域。
+#[tauri::command]
+pub fn banner_geometry(app: AppHandle) -> Value {
+    let window = app.get_webview_window(WINDOW_LABEL);
+    let rect = window.as_ref().and_then(|window| {
+        window_rect(window).map(|(x, y, width, height)| {
+            serde_json::json!({ "x": x, "y": y, "width": width, "height": height })
+        })
+    });
+    let cursor = cursor_point().map(|point| serde_json::json!({ "x": point.x, "y": point.y }));
+    serde_json::json!({
+        "visible": window.and_then(|window| window.is_visible().ok()).unwrap_or(false),
+        "rect": rect,
+        "cursor": cursor,
+    })
 }

@@ -1,0 +1,9 @@
+/* 主要设置：种子颜色读数需要放下 #RRGGBB 七位，跟随系统时颜色输入置灰 */
+.field__value--hex {
+  min-width: 9ch;
+}
+
+[data-settings-panel="theme"] .field__color:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
