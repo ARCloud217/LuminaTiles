@@ -1,0 +1,104 @@
+/* 顶部横幅：整条贴顶，颜色全部来自主题令牌；高度由内容撑开，窗口高度随测量结果同步。 */
+
+html,
+body {
+  margin: 0;
+  height: auto;
+  background: transparent;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family-base);
+}
+
+.banner {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition:
+    transform var(--duration-banner-in, 180ms) var(--ease-out),
+    opacity var(--duration-banner-in, 180ms) var(--ease-out);
+}
+
+.banner[data-state="shown"] {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.banner[data-state="leaving"] {
+  transform: translateY(-100%);
+  opacity: 0;
+  transition-duration: var(--duration-banner-out, 160ms);
+}
+
+/* 光标落在横幅上时淡出，让下面的内容露出来（窗口本身点击穿透）。 */
+.banner[data-state="shown"].is-dimmed {
+  opacity: 0.35;
+  transition-duration: 120ms;
+}
+
+.banner__signal {
+  flex: 0 0 auto;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--banner-signal, var(--color-accent));
+}
+
+.banner[data-level="success"] {
+  --banner-signal: var(--color-success);
+}
+
+.banner[data-level="warning"] {
+  --banner-signal: var(--color-warning);
+}
+
+.banner[data-level="error"] {
+  --banner-signal: var(--color-danger);
+}
+
+.banner__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.banner__text {
+  margin: 0;
+  font-size: var(--font-size-body);
+  line-height: 1.45;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.banner__meta {
+  flex: 0 0 auto;
+  font-size: var(--font-size-caption);
+  color: var(--color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    transition: opacity 120ms linear;
+    transform: none;
+  }
+
+  .banner[data-state="shown"] {
+    transform: none;
+  }
+
+  .banner[data-state="leaving"] {
+    transform: none;
+  }
+}

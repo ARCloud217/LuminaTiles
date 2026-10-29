@@ -8,6 +8,7 @@ pub fn run() {
             let handle = app.handle().clone();
             features::lock_indicator::init(handle.clone());
             features::theme::init(&handle);
+            features::banner::init(&handle);
             features::lock_indicator::init_window(&handle);
             features::tray::init(&handle)?;
             Ok(())
@@ -32,7 +33,16 @@ pub fn run() {
             features::theme::theme_settings,
             features::theme::update_theme_settings,
             features::theme::reset_theme_settings,
-            features::theme::system_theme
+            features::theme::system_theme,
+            features::messages::message_publish,
+            features::messages::message_dismiss,
+            features::banner::banner_settings,
+            features::banner::update_banner_settings,
+            features::banner::banner_ready,
+            features::banner::banner_done,
+            features::banner::banner_clear,
+            features::banner::banner_resize,
+            features::banner::banner_show
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

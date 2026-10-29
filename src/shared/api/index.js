@@ -104,3 +104,77 @@ export async function getSystemTheme() {
 export async function onThemeChanged(handler) {
   return events().listen("theme:changed", (event) => handler(event.payload));
 }
+
+/** 发布消息；后端分配 id、去重后广播到全部窗口。 */
+export async function messagePublish(message) {
+  return core().invoke("message_publish", { message });
+}
+
+/** 撤销指定消息。 */
+export async function messageDismiss(id) {
+  return core().invoke("message_dismiss", { id });
+}
+
+/** 读取横幅设置（默认停留时长与目标显示器）。 */
+export async function getBannerSettings() {
+  return core().invoke("banner_settings");
+}
+
+/** 保存横幅设置，返回校验后的设置。 */
+export async function saveBannerSettings(settings) {
+  return core().invoke("update_banner_settings", { settings });
+}
+
+/** 横幅页事件已订阅完毕的握手；后端会补发缓存的消息。 */
+export async function bannerReady() {
+  return core().invoke("banner_ready");
+}
+
+/** 队列已空：收窗。 */
+export async function bannerDone() {
+  return core().invoke("banner_done");
+}
+
+/** 清空横幅队列与缓存。 */
+export async function bannerClear() {
+  return core().invoke("banner_clear");
+}
+
+/** 同步横幅内容高度（逻辑像素）。 */
+export async function bannerResize(height) {
+  return core().invoke("banner_resize", { height });
+}
+
+/** 订阅消息广播。 */
+export async function onMessage(handler) {
+  return events().listen("lumina:message", (event) => handler(event.payload));
+}
+
+/** 订阅消息撤销。 */
+export async function onMessageDismissed(handler) {
+  return events().listen("lumina:message-dismissed", (event) => handler(event.payload));
+}
+
+/** 订阅横幅消息与清空（横幅页专用）。 */
+export async function onBannerMessage(handler) {
+  return events().listen("banner:message", (event) => handler(event.payload));
+}
+
+export async function onBannerClear(handler) {
+  return events().listen("banner:clear", () => handler());
+}
+
+/** 订阅光标悬停判定与点击消失。 */
+export async function onBannerHover(handler) {
+  return events().listen("banner:hover", (event) => handler(event.payload));
+}
+
+export async function onBannerDismiss(handler) {
+  return events().listen("banner:dismiss", () => handler());
+}
+
+/** 发布时的默认停留时长跟随横幅设置：消息里 0 或缺省时由页面补。 */
+export async function resolveBannerDuration() {
+  const settings = await getBannerSettings();
+  return settings.durationMs;
+}

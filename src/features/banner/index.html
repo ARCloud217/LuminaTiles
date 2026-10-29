@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN" data-window="banner">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-title-key="app.title">LuminaTiles</title>
+    <link rel="stylesheet" href="../../shared/styles/fonts.css" />
+    <link rel="stylesheet" href="../../shared/styles/tokens.css" />
+    <link rel="stylesheet" href="../../shared/styles/theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      // 种子写入前先藏起内容，避免首帧闪默认色。
+      document.documentElement.dataset.themePending = "";
+    </script>
+    <script type="module" src="../../main.js"></script>
+  </head>
+  <body>
+    <section class="banner" data-banner data-level="info" data-state="idle">
+      <span class="banner__signal" aria-hidden="true"></span>
+      <div class="banner__content">
+        <p class="banner__text" data-banner-text role="status" aria-live="polite"></p>
+        <span class="banner__meta" data-banner-meta hidden></span>
+      </div>
+    </section>
+  </body>
+</html>

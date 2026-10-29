@@ -18,6 +18,22 @@
         "minHeight": 480
       },
       {
+        "label": "banner",
+        "url": "features/banner/index.html",
+        "title": "Banner",
+        "width": 1280,
+        "height": 64,
+        "visible": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false,
+        "resizable": false,
+        "shadow": false,
+        "center": false
+      },
+      {
         "label": "lock-indicator",
         "url": "features/lock-indicator/index.html",
         "title": "Lock indicator",
