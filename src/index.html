@@ -4,8 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
+    <script>
+      // 种子写入前先藏起 body，避免默认琥珀闪一下；主题应用后由 features/theme 移除。
+      document.documentElement.dataset.themePending = "";
+    </script>
     <link rel="stylesheet" href="shared/styles/fonts.css" />
     <link rel="stylesheet" href="shared/styles/tokens.css" />
+    <link rel="stylesheet" href="shared/styles/theme.css" />
     <link rel="stylesheet" href="shared/styles/shell.css" />
     <link rel="stylesheet" href="features/lock-indicator/settings.css" />
     <script type="module" src="main.js"></script>

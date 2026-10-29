@@ -23,8 +23,8 @@ body {
   border: 1px solid var(--color-line-strong);
   border-left: 2px solid var(--color-line-strong);
   border-radius: var(--radius-sm);
-  background: linear-gradient(180deg, rgba(232, 237, 243, 0.05), rgba(232, 237, 243, 0.012)),
-    rgba(8, 11, 15, 0.95);
+  background: linear-gradient(180deg, var(--color-wash), var(--color-wash-soft)),
+    color-mix(in oklab, var(--color-surface) 95%, transparent);
   box-shadow: var(--shadow-toast);
   color: var(--toast-text, var(--color-ink));
   white-space: nowrap;
@@ -38,7 +38,7 @@ body {
       color-mix(in srgb, var(--toast-accent, var(--color-accent)) 16%, transparent),
       color-mix(in srgb, var(--toast-accent, var(--color-accent)) 2%, transparent)
     ),
-    rgba(8, 11, 15, 0.95);
+    color-mix(in oklab, var(--color-surface) 95%, transparent);
 }
 
 [data-lock-indicator-key] {

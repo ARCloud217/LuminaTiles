@@ -81,30 +81,32 @@
   --seed-accent: #e9a23b;
   --seed-accent-alt: #3f7bd6;
   --seed-bg: #06070a;
-  --seed-surface: #10151c;
+  --seed-surface: #0a0d12;
 
-  --tone-depth: 0.022;          /* bg-deep 相对 bg */
-  --tone-lift: 0.30;            /* surface-raised 相对 surface */
+  --tone-depth: 0.025;          /* bg-deep 相对 bg */
+  --tone-lift: 0.0375;          /* surface-raised 相对 surface */
   --tone-ink-l: 0.945;
-  --tone-ink-muted-l: 0.635;
-  --tone-ink-faint-l: 0.475;
-  --tone-line-lift: 0.32;
-  --tone-line-strong-lift: 0.55;
+  --tone-ink-muted-l: 0.598;
+  --tone-ink-faint-l: 0.45;
+  --tone-line-lift: 0.089;
+  --tone-line-strong-lift: 0.166;
   --tone-wash-strength: 0.06;   /* 白光/暗光叠加的强度：深色底用白光，浅色底用暗光 */
   --tone-wash-color: 255 255 255;
 }
 [data-theme-tone="light"] {
   --tone-depth: 0.020;
-  --tone-lift: -0.28;
+  --tone-lift: -0.035;
   --tone-ink-l: 0.235;
   --tone-ink-muted-l: 0.495;
   --tone-ink-faint-l: 0.625;
-  --tone-line-lift: -0.14;
-  --tone-line-strong-lift: -0.26;
+  --tone-line-lift: -0.06;
+  --tone-line-strong-lift: -0.12;
   --tone-wash-strength: 0.05;
   --tone-wash-color: 15 18 24;
 }
 ```
+
+> **实施期标定（2026-10-29）**：本文初稿把旧 `tokens.css` 的 `--color-surface-raised`（`#10151c`）误当成「副背景种子」，而旧 `--color-surface` 实际是 `#0a0d12`；照初稿的 0.30 / 0.32 / 0.55 档位，默认主题的 `surface-raised` 会被推到 `rgb(91,98,107)` 这类中灰，与现有视觉差一个量级。落地做法：副背景种子改回 `#0a0d12`，再用二分法在真实 WebView2 里按默认种子反解各档位，使默认主题逐通道复现旧令牌（实测每通道偏差 ≤6/255）；浅色档位同理标定。调整档位前请先跑 `node scripts/snapshot-theme.mjs <CDP端口>` 复核，不要凭手感调。
 
 推导表（一套表达式，两种 tone 通用）：
 

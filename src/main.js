@@ -1,9 +1,12 @@
 import { initI18n, t } from "./shared/i18n/index.js";
+import { initThemeFeature } from "./features/theme/index.js";
 import { initLockIndicatorFeature } from "./features/lock-indicator/index.js";
 import { initLockIndicatorSettingsFeature } from "./features/lock-indicator/settings.js";
 
-// 功能注册表：window 指定功能运行在哪个窗口，enabled 用于单独停用与调试。
+// 功能注册表：windows 指定功能运行在哪些窗口，enabled 用于单独停用与调试，
+// beforeI18n 表示必须在语言包就绪前完成（主题要先落种子，避免首帧闪默认色）。
 const FEATURES = [
+  { id: "theme", enabled: true, windows: ["main", "lock-indicator"], beforeI18n: true, init: initThemeFeature },
   { id: "lock-indicator", enabled: true, window: "lock-indicator", init: initLockIndicatorFeature },
   { id: "lock-indicator-settings", enabled: true, window: "main", init: initLockIndicatorSettingsFeature }
 ];
@@ -174,23 +177,29 @@ function reportFeatureFailure(feature, error) {
   console.error(`[lumina-tiles] 功能 ${feature.id} 初始化失败`, error);
 }
 
+async function runFeature(feature) {
+  try {
+    const cleanup = await feature.init();
+    if (typeof cleanup === "function") cleanups.push(cleanup);
+  } catch (error) {
+    reportFeatureFailure(feature, error);
+  }
+}
+
 async function bootstrap() {
   buildLattice();
   startClock();
   const settingsNavCleanup = initSettingsNav();
   if (typeof settingsNavCleanup === "function") cleanups.push(settingsNavCleanup);
-  await initI18n();
 
   const windowId = document.documentElement.dataset.window;
-  for (const feature of FEATURES) {
-    if (!feature.enabled || feature.window !== windowId) continue;
-    try {
-      const cleanup = await feature.init();
-      if (typeof cleanup === "function") cleanups.push(cleanup);
-    } catch (error) {
-      reportFeatureFailure(feature, error);
-    }
-  }
+  const active = FEATURES.filter(
+    (feature) => feature.enabled && (feature.windows ?? [feature.window]).includes(windowId)
+  );
+
+  for (const feature of active.filter((item) => item.beforeI18n)) await runFeature(feature);
+  await initI18n();
+  for (const feature of active.filter((item) => !item.beforeI18n)) await runFeature(feature);
 
   window.addEventListener("pagehide", () => {
     for (const cleanup of cleanups.splice(0)) cleanup();

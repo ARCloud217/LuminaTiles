@@ -1,0 +1,70 @@
+/* 主题令牌：四个种子 → 整套色彩，深浅两档共用一套推导表达式。
+   种子由 features/theme 在启动时写到 :root；这里同时是未加载设置时的默认值。 */
+
+:root {
+  --seed-accent: #e9a23b;
+  --seed-accent-alt: #3f7bd6;
+  --seed-bg: #06070a;
+  --seed-surface: #0a0d12;
+
+  /* 深色档：越深越压黑，越亮越抬灰 */
+  --tone-depth: 0.025; /* bg-deep 相对 bg 的下压量 */
+  --tone-lift: 0.0375; /* surface-raised 相对 surface 的抬升量 */
+  --tone-ink-l: 0.945;
+  --tone-ink-muted-l: 0.598;
+  --tone-ink-faint-l: 0.45;
+  --tone-line-lift: 0.089;
+  --tone-line-strong-lift: 0.166;
+  --tone-wash-strength: 0.06; /* 白光/暗光叠加的强度：深底用白光，浅底用暗光 */
+  --tone-wash-color: 255 255 255;
+
+  --color-bg: var(--seed-bg);
+  --color-surface: var(--seed-surface);
+  --color-bg-deep: oklch(from var(--seed-bg) calc(l - var(--tone-depth)) c h);
+  --color-surface-raised: oklch(from var(--seed-surface) calc(l + var(--tone-lift)) calc(c * 1.05) h);
+  --color-ink: oklch(from var(--seed-bg) var(--tone-ink-l) calc(c * 0.6) h);
+  --color-ink-muted: oklch(from var(--seed-bg) var(--tone-ink-muted-l) calc(c * 0.6) h);
+  --color-ink-faint: oklch(from var(--seed-bg) var(--tone-ink-faint-l) calc(c * 0.6) h);
+  --color-line: oklch(from var(--seed-surface) calc(l + var(--tone-line-lift)) calc(c * 1.1) h);
+  --color-line-strong: oklch(from var(--seed-surface) calc(l + var(--tone-line-strong-lift)) calc(c * 1.1) h);
+
+  --color-accent: var(--seed-accent);
+  --color-accent-soft: color-mix(in oklab, var(--seed-accent) 14%, transparent);
+  --color-accent-glow: color-mix(in oklab, var(--seed-accent) 35%, transparent);
+  --color-secondary: var(--seed-accent-alt);
+  --color-secondary-soft: color-mix(in oklab, var(--seed-accent-alt) 14%, transparent);
+  --color-secondary-glow: color-mix(in oklab, var(--seed-accent-alt) 35%, transparent);
+
+  /* 语义色不参与推导：红必须像红，只按档位换明度 */
+  --color-danger: #ff6b57;
+  --color-success: #57c98a;
+  --color-warning: #e9a23b;
+
+  --color-wash: rgb(var(--tone-wash-color) / var(--tone-wash-strength));
+  --color-wash-soft: rgb(var(--tone-wash-color) / calc(var(--tone-wash-strength) * 0.5));
+}
+
+/* 首帧：种子还没写进 :root 前先藏起 body，避免默认琥珀闪一下 */
+html[data-theme-pending] body {
+  opacity: 0;
+}
+
+body {
+  transition: opacity 120ms var(--ease-out);
+}
+
+[data-theme-tone="light"] {
+  --tone-depth: 0.02;
+  --tone-lift: -0.035;
+  --tone-ink-l: 0.235;
+  --tone-ink-muted-l: 0.495;
+  --tone-ink-faint-l: 0.625;
+  --tone-line-lift: -0.06;
+  --tone-line-strong-lift: -0.12;
+  --tone-wash-strength: 0.05;
+  --tone-wash-color: 15 18 24;
+
+  --color-danger: #c33a24;
+  --color-success: #1f7a4d;
+  --color-warning: #a8701b;
+}

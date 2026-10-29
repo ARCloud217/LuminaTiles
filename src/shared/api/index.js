@@ -79,3 +79,28 @@ export async function onLockIndicatorHide(handler) {
 export async function onLockIndicatorSettings(handler) {
   return events().listen("lock-indicator:settings", (event) => handler(event.payload));
 }
+
+/** 读取主题设置。 */
+export async function getThemeSettings() {
+  return core().invoke("theme_settings");
+}
+
+/** 保存主题设置，返回后端校验后的设置；跟随系统期间改种子会以 theme_locked_by_system 失败。 */
+export async function saveThemeSettings(settings) {
+  return core().invoke("update_theme_settings", { settings });
+}
+
+/** 恢复主题默认设置，返回恢复后的设置。 */
+export async function resetThemeSettings() {
+  return core().invoke("reset_theme_settings");
+}
+
+/** 读取系统强调色与明暗；读不到的字段为 null。 */
+export async function getSystemTheme() {
+  return core().invoke("system_theme");
+}
+
+/** 订阅主题变化，各窗口即时换肤；返回取消订阅函数。 */
+export async function onThemeChanged(handler) {
+  return events().listen("theme:changed", (event) => handler(event.payload));
+}

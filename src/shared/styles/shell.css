@@ -62,7 +62,7 @@ fieldset {
   grid-template-rows: auto minmax(0, 1fr) auto;
   min-height: 100%;
   background:
-    radial-gradient(120% 90% at 88% -18%, rgba(233, 162, 59, 0.12), transparent 58%),
+    radial-gradient(120% 90% at 88% -18%, color-mix(in oklab, var(--color-accent) 12%, transparent), transparent 58%),
     linear-gradient(180deg, var(--color-bg-deep), var(--color-bg) 32%, var(--color-bg));
 }
 
@@ -74,7 +74,7 @@ fieldset {
   padding: 0 26px;
   height: 46px;
   border-bottom: 1px solid var(--color-line);
-  background: linear-gradient(180deg, rgba(232, 237, 243, 0.035), transparent);
+  background: linear-gradient(180deg, var(--color-wash-soft), transparent);
 }
 
 .topbar__mark {
@@ -232,7 +232,7 @@ fieldset {
   position: relative;
   border: 1px solid var(--color-line);
   border-color: color-mix(in srgb, var(--color-accent) calc(var(--glow) * 72%), var(--color-line));
-  background: linear-gradient(180deg, rgba(232, 237, 243, 0.016), transparent);
+  background: linear-gradient(180deg, var(--color-wash-soft), transparent);
   transform: translateY(calc(var(--glow) * -1px));
   transition: transform 140ms var(--ease-out), border-color 140ms var(--ease-out);
 }
@@ -293,7 +293,7 @@ fieldset {
   gap: 24px;
   padding: 18px 26px 22px;
   border-top: 1px solid var(--color-line-strong);
-  background: linear-gradient(180deg, rgba(232, 237, 243, 0.03), transparent 42%), var(--color-surface);
+  background: linear-gradient(180deg, var(--color-wash-soft), transparent 42%), var(--color-surface);
 }
 
 .settings__rail {
@@ -348,7 +348,7 @@ fieldset {
 
 .settings__tab:hover {
   color: var(--color-ink);
-  background: rgba(232, 237, 243, 0.03);
+  background: var(--color-wash-soft);
 }
 
 .settings__tab[aria-current="true"] {
@@ -445,11 +445,11 @@ fieldset {
   0%,
   100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(233, 162, 59, 0.4);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 40%, transparent);
   }
   50% {
     opacity: 0.55;
-    box-shadow: 0 0 0 4px rgba(233, 162, 59, 0);
+    box-shadow: 0 0 0 4px transparent;
   }
 }
 
