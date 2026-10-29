@@ -2,6 +2,7 @@
 // 具体颜色由 shared/styles/theme.css 从种子推导，这里不出现任何色值。
 
 import { getSystemTheme, getThemeSettings, onThemeChanged } from "../../shared/api/index.js";
+import { publish } from "../../shared/messages/index.js";
 
 // 跟随系统期间使用的内置背景对：系统只给明暗，取哪一组背景由这里决定。
 const SYSTEM_BACKGROUNDS = {
@@ -72,6 +73,10 @@ export async function applyTheme() {
   const system = settings.followSystem ? await getSystemTheme() : null;
   if (settings.followSystem && system && system.accent === null && system.light === null) {
     console.warn("[lumina-tiles] 系统主题读取失败，暂用用户种子");
+    // 这条提示走消息中心：横幅页负责翻译，主题层不依赖 i18n。
+    publish({ level: "warning", i18nKey: "messages.systemAccentFailed", origin: "frontend" }).catch((error) => {
+      console.error("[lumina-tiles] 系统主题读取失败的提示发送失败", error);
+    });
   }
   const tone = resolveTone(settings, system);
   const seeds = resolveSeeds(settings, system, tone);

@@ -71,7 +71,6 @@
       "systemThemeActive": "Provided by the system: {tone} · accent {accent}",
       "systemThemeDark": "Dark",
       "systemThemeLight": "Light",
-      "systemThemeReading": "Reading the system theme…",
       "systemThemeFailed": "Could not read the system theme; your seeds are in use.",
       "seedsLocked": "Colors come from the system while following; turn it off to customize. Your own seeds are kept.",
       "reset": "Reset to defaults",
@@ -109,7 +108,6 @@
       "monitorPrimary": "Primary monitor",
       "monitorOption": "{name} ({width}×{height})",
       "geometryFailed": "Could not read the banner geometry.",
-      "tokens": "Theme tokens",
       "contrastBody": "Body contrast",
       "contrastMuted": "Muted text",
       "contrastAccent": "Accent",
@@ -118,7 +116,6 @@
       "systemTone": "System tone",
       "systemUnknown": "Unavailable",
       "readSystem": "Re-read system theme",
-      "reading": "Reading…",
       "fontState": "Font state",
       "fontsReady": "Ready",
       "fontsLoading": "Loading",
@@ -143,9 +140,7 @@
     "unavailable": "Insert hints are unavailable: the system did not allow the keyboard hook. Caps Lock and Num Lock hints still work."
   },
   "messages": {
-    "systemAccentFailed": "Could not read the system theme; custom seeds are in use.",
-    "resetDone": "Local data cleared, quitting now.",
-    "themeLocked": "Colors come from the system while following; turn it off first."
+    "systemAccentFailed": "Could not read the system theme; custom seeds are in use."
   },
   "tray": {
     "tooltip": "LuminaTiles",

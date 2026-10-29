@@ -54,7 +54,7 @@
     "primaryAccent": "#e9a23b",
     "secondaryAccent": "#3f7bd6",
     "backgroundPrimary": "#06070a",
-    "backgroundSecondary": "#10151c",
+    "backgroundSecondary": "#0a0d12",
     "tone": "auto",
     "followSystem": false
   }
@@ -65,7 +65,7 @@
 - `followSystem`（用户拍板「一起跟随，但不强制」→ 追问后定为「跟随期间系统值优先」）：开启后四个种子全部来自系统——
   - 明暗 = `AppsUseLightTheme`；
   - 主强调色 = 系统强调色；
-  - 主/副背景 = 系统明暗对应的内置背景对：深 `#06070a` / `#10151c`，浅 `#f4f5f8` / `#eaecf1`；
+  - 主/副背景 = 系统明暗对应的内置背景对：深 `#06070a` / `#0a0d12`，浅 `#f4f5f8` / `#eaecf1`；
   - 副强调色 = `oklch(from <系统强调色> l calc(c * 0.9) calc(h + 150))`，不可编辑。
 - 跟随期间面板四个种子输入框**只读**并显示系统值，附说明「跟随系统期间颜色由系统提供，关闭跟随即可自定义」；用户自己的四个种子原样留在 `settings.json`，关闭跟随后立即恢复（不清空、不覆盖）。
 - 跟随期间写种子一律拒绝：`update_theme_settings` 收到 `followSystem=true` 且携带种子变更时返回错误码 `theme_locked_by_system`，不静默忽略；「关闭跟随」本身始终允许。
@@ -198,7 +198,7 @@ Rust 命令 `system_theme` → `{ accent: "#rrggbb" | null, light: bool | null }
   text: "…",
   params: { value: "Caps Lock" },
   origin: "frontend" | "rust",
-  durationMs: 5000,                // 0 或缺失 = 5000
+  durationMs: 0,                   // 0 或缺失 = 跟随横幅设置（默认 5000ms）
   count: 1                         // 去重合并计数
 }
 ```
@@ -312,15 +312,17 @@ Rust **不**管显示节奏，只管路由与去重，外加一件窗口级的�
 | 命令 | `system_theme` | 读系统强调色与明暗（字段级失败返回 null） |
 | 命令 | `message_publish` / `message_dismiss` | 唯一发布与撤销入口 |
 | 命令 | `banner_ready` / `banner_done` / `banner_clear` / `banner_resize` | 横幅页生命周期与尺寸 |
+| 命令 | `banner_settings` / `update_banner_settings` | 横幅默认停留时长与目标显示器（设置坞 03 需要持久化；写入后广播 `banner:settings`） |
+| 命令 | `banner_geometry` | 调试页体检：`{ visible, rect, cursor }` |
 | 命令 | `banner_show` | 定位 + 显示 + emit（内部缓存 pending） |
 | 命令 | `reset_app_data_and_exit` | 清数据并退出 |
 | 事件 | `lumina:message` / `lumina:message-dismissed` | 消息总线（全部窗口） |
 | 事件 | `theme:changed` | 种子或 tone 变化，各窗口即时换肤 |
-| 事件 | `banner:message` / `banner:clear` / `banner:hover` / `banner:dismiss` | Rust → 横幅页（含轮询出的悬停与点击） |
+| 事件 | `banner:message` / `banner:clear` / `banner:hover` / `banner:dismiss` / `banner:settings` | Rust → 横幅页（含轮询出的悬停与点击、设置变更） |
 
 ## 11. 语言包新增键
 
-`settings.theme.{title,description,primaryAccent,secondaryAccent,backgroundPrimary,backgroundSecondary,tone,toneAuto,toneDark,toneLight,followSystem,systemThemeActive,systemThemeDark,systemThemeLight,seedsLocked,contrastBody,contrastMuted,contrastAccent,reset,readingFailed}`、`settings.debug.{title,description,messages,theme,fonts,danger,send,sendCustom,duration,clearQueue,sentCount,relaunchWipe,confirmWipe,fontHit,fontFallback}`、`messages.{systemAccentFailed,resetDone}`。中英同步、键序一致。
+实施后的键清单以语言包与功能文档为准（本节初稿只列了估算集合，落地时按面板实际文案补齐）：`settings.theme.*`（含 `systemThemeReading` / `seedsLocked` / `saveFailed`）、`settings.debug.*`（含 `fontState` / `yes` / `no` / `sentCount` / `monitorFollow` / `bannerMissing` 等）、`messages.systemAccentFailed`。中英同步、键序一致；逐项见 [features/theme.md](../../features/theme.md)、[features/debug.md](../../features/debug.md)。
 
 ## 12. 文档同步
 
@@ -363,3 +365,5 @@ Rust **不**管显示节奏，只管路由与去重，外加一件窗口级的�
 5. 横幅窗口 + 渲染页 + 队列 + ready 握手 + 光标轮询（悬停淡化 / 点击消失）。
 6. 调试页四组（把前三块挂上，落地重置）。
 7. 文档同步 + 全量验证 + 截图归档。
+
+> **实施状态（2026-10-29 收尾）**：以上七步全部落地，对应提交 `6567cb9`（字体）、`4984dda`（settings 共享层）、`da6e775`（主题令牌层）、`d6a3efb`（消息总线与横幅）、`195c3dd`（设置坞 02/03）。实施期与文档的偏差只有两处，已同步：`backgroundSecondary` 默认值 `#0a0d12`（§4.1 标定说明）、消息 `durationMs` 缺省/0 表示跟随横幅设置（§6.1/§10）；另因调试页需要持久化横幅参数，补了 `banner_settings` / `update_banner_settings` / `banner_geometry` 三个命令与 `banner:settings` 事件。功能说明见 `docs/features/{theme,messages,banner,debug}.md`。

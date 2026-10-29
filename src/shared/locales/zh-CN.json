@@ -71,7 +71,6 @@
       "systemThemeActive": "当前由系统提供：{tone} · 强调色 {accent}",
       "systemThemeDark": "深色",
       "systemThemeLight": "浅色",
-      "systemThemeReading": "正在读取系统主题…",
       "systemThemeFailed": "系统主题读取失败，暂用你的种子。",
       "seedsLocked": "跟随系统期间颜色由系统提供；关闭跟随即可自定义，你的种子会被保留。",
       "reset": "恢复默认",
@@ -109,7 +108,6 @@
       "monitorPrimary": "主显示器",
       "monitorOption": "{name}（{width}×{height}）",
       "geometryFailed": "横幅体检读取失败。",
-      "tokens": "主题令牌",
       "contrastBody": "正文对比度",
       "contrastMuted": "次要文字",
       "contrastAccent": "强调色",
@@ -118,7 +116,6 @@
       "systemTone": "系统明暗",
       "systemUnknown": "不可用",
       "readSystem": "重新读取系统主题",
-      "reading": "读取中…",
       "fontState": "字体状态",
       "fontsReady": "已就绪",
       "fontsLoading": "加载中",
@@ -143,9 +140,7 @@
     "unavailable": "插入模式提示不可用：系统未允许安装键盘钩子；大写锁定与数字锁定提示不受影响。"
   },
   "messages": {
-    "systemAccentFailed": "系统主题读取失败，暂时使用自定义种子。",
-    "resetDone": "本地数据已清除，正在退出。",
-    "themeLocked": "跟随系统期间颜色由系统提供，请先关闭跟随。"
+    "systemAccentFailed": "系统主题读取失败，暂时使用自定义种子。"
   },
   "tray": {
     "tooltip": "LuminaTiles",
