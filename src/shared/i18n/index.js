@@ -36,6 +36,11 @@ function translateDocument() {
     if (t(key) === key) missing.push(key);
     element.textContent = t(key);
   }
+  for (const element of document.querySelectorAll("[data-i18n-aria-label]")) {
+    const key = element.dataset.i18nAriaLabel;
+    if (t(key) === key) missing.push(key);
+    element.setAttribute("aria-label", t(key));
+  }
   if (missing.length > 0) {
     console.warn("[lumina-tiles] 缺少翻译键：", missing.join(", "));
   }

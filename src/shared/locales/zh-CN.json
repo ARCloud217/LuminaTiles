@@ -11,6 +11,7 @@
   },
   "settings": {
     "title": "设置",
+    "nav": "设置分组",
     "lockIndicator": {
       "title": "按键提示",
       "description": "调整 Caps Lock / Num Lock / Insert 切换时弹出提示的位置、大小、色彩与动画。",

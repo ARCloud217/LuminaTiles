@@ -11,6 +11,7 @@
   },
   "settings": {
     "title": "Settings",
+    "nav": "Settings sections",
     "lockIndicator": {
       "title": "Key hints",
       "description": "Adjust where and how the hint appears when Caps Lock, Num Lock or Insert toggles.",

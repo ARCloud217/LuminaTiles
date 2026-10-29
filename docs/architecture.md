@@ -69,10 +69,11 @@ src-tauri/src/
 
 ## 视觉语言
 
-界面走「新极简 + 科幻控制台」：近黑画布、单一信号琥珀（`--color-accent`）、冷灰细线划分层次，不使用图片资源，所有图形都由 CSS/JS 绘制。
+界面走「新极简 + 科幻控制台」：近黑画布、单一信号琥珀（`--color-accent`）、冷灰细线划分层次，不使用图片资源，所有图形都由 CSS/JS 绘制。完整约束见 [design-language.md](design-language.md)，新增界面必须遵守。
 
-- 平面构成：主窗口为「顶栏 / 展示区 / 设置坞」三段式；展示区左列排版（eyebrow + 巨型展示体 + 说明），右列是 9×6 的 `lattice` 点阵：静态细格 + 一条 `.lattice__beam` 循环扫过，第 23 格常亮为焦点。
-- 动态设计：顶栏时钟每秒走字、状态点脉动、点阵扫光带、三段式入场位移；全部收敛在 `shell.css` 的 keyframes 内，`prefers-reduced-motion` 时停用。
+- 平面构成：主窗口为「顶栏 / 展示区 / 设置坞」三段式；展示区左列排版（eyebrow + 巨型展示体 + 说明），右列是 9×6 的 `lattice` 点阵：光标进入时用四角括线（`.lattice__reticle`）框选所指格子，邻格按距离透出余光（`--glow`），第 23 格常亮为焦点；没有循环扫光。
+- 设置坞：左侧是分组导航（`.settings__rail`，当前只有「按键提示」一组），右侧是按组切换的面板（`.settings__panel[data-settings-panel]`）；新增功能只需追加一组 tab 与面板，切换由 `src/main.js` 的 `initSettingsNav()` 统一驱动。
+- 动态设计：顶栏时钟每秒走字、状态点脉动、点阵光标框选与余光、三段式入场位移；位移类动效收敛在 `shell.css` 的 keyframes 与过渡里，`prefers-reduced-motion` 时停用。
 - 交互设计：按钮切角（`clip-path`）、`focus-visible` 统一 1px 信号色描边、滑杆为细轨 + 硬边方形拇指、输入控件硬边 2px 圆角。
 - 字体分工：`--font-family-display`（Bahnschrift）承担品牌与按钮，`--font-family-mono`（Cascadia Mono）承担时钟、数值与字段标签，正文用 Segoe UI Variable。
 

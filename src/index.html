@@ -29,23 +29,40 @@
         <div class="lattice" data-lattice aria-hidden="true"></div>
       </section>
 
-      <section class="settings" aria-labelledby="settings-title">
-        <div class="settings__header">
-          <div class="settings__heading">
-            <span class="settings__index" aria-hidden="true">01</span>
-            <h2 class="settings__title" id="settings-title" data-i18n="settings.title"></h2>
-          </div>
-          <div class="settings__actions">
-            <button type="button" class="button" data-settings-action="preview" data-i18n="settings.lockIndicator.preview"></button>
-            <button type="button" class="button button--ghost" data-settings-action="reset" data-i18n="settings.lockIndicator.reset"></button>
-          </div>
+      <section class="settings" aria-labelledby="settings-rail-title">
+        <div class="settings__rail">
+          <p class="settings__rail-title" id="settings-rail-title" data-i18n="settings.title"></p>
+
+          <nav class="settings__nav" data-i18n-aria-label="settings.nav">
+            <ul class="settings__tabs">
+              <li>
+                <button
+                  type="button"
+                  class="settings__tab"
+                  data-settings-tab="lock-indicator"
+                  aria-current="true"
+                  aria-controls="settings-panel-lock-indicator"
+                >
+                  <span class="settings__tab-index" aria-hidden="true">01</span>
+                  <span class="settings__tab-label" data-i18n="settings.lockIndicator.title"></span>
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
 
-        <form class="settings__form" data-settings-form>
-          <fieldset class="settings__group">
-            <legend class="settings__legend" data-i18n="settings.lockIndicator.title"></legend>
-            <p class="settings__hint" data-i18n="settings.lockIndicator.description"></p>
+        <div class="settings__panel" id="settings-panel-lock-indicator" data-settings-panel="lock-indicator">
+          <header class="settings__panel-head">
+            <h2 class="settings__title" id="settings-title" data-i18n="settings.lockIndicator.title"></h2>
+            <div class="settings__actions">
+              <button type="button" class="button" data-settings-action="preview" data-i18n="settings.lockIndicator.preview"></button>
+              <button type="button" class="button button--ghost" data-settings-action="reset" data-i18n="settings.lockIndicator.reset"></button>
+            </div>
+          </header>
 
+          <p class="settings__hint" data-i18n="settings.lockIndicator.description"></p>
+
+          <form class="settings__form" data-settings-form>
             <div class="settings__grid">
               <div class="field field--span-4">
                 <label class="field__label" for="setting-position" data-i18n="settings.lockIndicator.position"></label>
@@ -143,12 +160,12 @@
                 </div>
               </div>
             </div>
-          </fieldset>
-        </form>
+          </form>
 
-        <p class="settings__status" role="status" data-settings-status hidden></p>
-        <p class="shell__error" role="alert" data-lock-indicator-error hidden></p>
-        <p class="shell__error" role="alert" data-init-error hidden></p>
+          <p class="settings__status" role="status" data-settings-status hidden></p>
+          <p class="shell__error" role="alert" data-lock-indicator-error hidden></p>
+          <p class="shell__error" role="alert" data-init-error hidden></p>
+        </div>
       </section>
     </main>
   </body>

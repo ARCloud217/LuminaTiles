@@ -44,28 +44,8 @@
   margin: 0;
 }
 
-.settings__legend {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--color-ink);
-}
-
-.settings__legend::after {
-  content: "";
-  flex: 1 1 auto;
-  height: 1px;
-  background: var(--color-line);
-}
-
 .settings__hint {
-  margin: var(--space-2) 0 var(--space-4);
+  margin: 0;
   max-width: 78ch;
   font-size: 0.8125rem;
   line-height: 1.6;
@@ -75,11 +55,12 @@
 .settings__grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 16px 18px;
+  gap: 16px;
 }
 
 .field {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
   min-width: 0;
 }

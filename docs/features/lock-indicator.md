@@ -9,7 +9,7 @@
 - 按下 CapsLock / NumLock / Insert 并松开后，提示窗按设置的锚点与偏移出现，约 1.2 秒（另加退场动画时长）后消失。
 - 提示内容为按键名 + 当前状态；开启状态用设置里的强调色显示。
 - 提示窗置顶、点击穿透、不抢焦点，不打断当前输入。
-- 主窗口「设置 → 按键提示」可实时调整：显示位置（跟随光标或九宫格锚点）、偏移、目标显示器、大小、强调色、文字颜色、透明度、动画预设与时长；改动即时保存并在下次提示时生效。
+- 主窗口「设置 → 按键提示」（设置坞左侧分组导航里的第一组）可实时调整：显示位置（跟随光标或九宫格锚点）、偏移、目标显示器、大小、强调色、文字颜色、透明度、动画预设与时长；改动即时保存并在下次提示时生效。
 - 「预览提示」立即按当前设置弹一次，便于调试；「恢复默认」回落到内置默认值。
 - 键盘钩子只承载 Insert；安装失败时设置面板显示本地化提示（仅插入模式提示不可用），大写/数字锁定仍由轮询检测、正常弹出。
 - 提示窗尺寸按内容收缩：宽度由卡片文字实测决定，外加一圈 10 逻辑像素（随缩放）的阴影留白，不再是固定 236×72 的大空框。
@@ -58,6 +58,18 @@
 | `durationMs` | 整数 | 120～600 毫秒 |
 
 非法值在保存时被 `normalize()` 夹取或丢弃（颜色非 `#RRGGBB` 时置空回落到主题色）。
+
+## 设置坞中的位置
+
+主窗口设置坞是「左分组导航 + 右面板」结构，按键提示是第一组（序号 01）：
+
+- 导航项：`button.settings__tab[data-settings-tab="lock-indicator"]`，含 `span.settings__tab-index`（装饰序号，`aria-hidden`）与 `span.settings__tab-label[data-i18n="settings.lockIndicator.title"]`；选中态用 `aria-current="true"` 表达，`aria-controls` 指向面板 id。
+- 面板：`div.settings__panel#settings-panel-lock-indicator[data-settings-panel="lock-indicator"]`，内部为标题、`预览提示`/`恢复默认` 按钮、说明文字与 `form[data-settings-form]`（12 列网格）。
+- 切换逻辑只有一份：`src/main.js` 的 `initSettingsNav()` 按 `data-settings-tab` / `data-settings-panel` 配对切换 `aria-current` 与 `hidden`，功能模块不自己管 tab。
+- 新增功能分组时：在 `.settings__tabs` 追加一个 tab（序号顺延）、在 `.settings` 追加对应面板，并补 `settings.<feature>.title` 语言键；无需改 JS。
+- 导航的 `aria-label` 来自 `settings.nav`，由 `translateDocument()` 的 `[data-i18n-aria-label]` 分支写入。
+
+视觉规范（色板、字体、间距、动效、组件形态）见 [../design-language.md](../design-language.md)，本功能的样式不得偏离。
 
 ## 配置与存储
 
